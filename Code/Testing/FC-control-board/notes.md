@@ -12,6 +12,7 @@
   - [ ] Add pinout for battery header.
   - [ ] Label for Reset and Boot buttons needs to be fixed.
 - [ ] Screw hole is under the USB connector. Connector should be moved to the side.
+- [ ] Components at the back block mounting of back wing.
 
 #### Improvements
 - [ ] Improve Voltage/Current protection for USB and battery.
