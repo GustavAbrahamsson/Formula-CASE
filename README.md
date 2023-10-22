@@ -9,7 +9,7 @@ WIP
 
 ![PCB render](Electronics/PCB/FC%20Control%20board%201.0/media/FC%20Control%20board%201.0_crop.png)
 
-[Schematic](Electronics/PCB/FC%20Control%20board%201.0/media/schematic_v1.0.pdf), [IBOM](Electronics/PCB/FC%20Control%20board%201.0/bom/ibom.html)
+[Schematic](Electronics/PCB/FC%20Control%20board%201.0/media/schematic_v1.0.pdf), [IBOM](Electronics/PCB/FC%20Control%20board%201.0/bom/ibom.html), [Notes](Code/Testing/FC-control-board/notes.md)
 
 
 
