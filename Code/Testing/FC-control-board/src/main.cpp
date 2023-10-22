@@ -48,6 +48,7 @@ int mapSpeed(int x) {
 
 struct_message recivedData;
 long lastReciveTime = 2000;
+long lastPrintTime = 0;
 
 Servo myservo = Servo();
 
@@ -56,13 +57,13 @@ Servo myservo = Servo();
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     memcpy(&recivedData, incomingData, sizeof(recivedData));
 
-    // Serial.printf(
-    //     "axisX: %d, axisY: %d, axisRX: %d, axisRY: %d",
-    //     recivedData.axisX,
-    //     recivedData.axisY,
-    //     recivedData.axisRX,
-    //     recivedData.axisRY
-    // );
+    Serial.printf(
+        "axisX: %d, axisY: %d, axisRX: %d, axisRY: %d",
+        recivedData.axisX,
+        recivedData.axisY,
+        recivedData.axisRX,
+        recivedData.axisRY
+    );
     lastReciveTime = millis();
 
     // Set motor speed
@@ -97,7 +98,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     // myservo.write(servoPin, angle);
     // myservo.write(servoPin, angle, 30, 1);
 
-    // Serial.printf("angle: %d\n", angle);
+    Serial.printf("angle: %d\n", angle);
 
 
 }
@@ -116,8 +117,6 @@ void setup() {
         Serial.println("Error initializing ESP-NOW");
         return;
     }
-    // Once ESPNow is successfully Init, we will register for recv CB to
-    // get recv packer info
     esp_now_register_recv_cb(OnDataRecv);
 
     // Print mac address
@@ -133,6 +132,11 @@ void setup() {
 }
 
 void loop() {
+    // If it has been more than 2 seconds since we have recived data
+    if (millis() - lastReciveTime > 2000 && millis() - lastPrintTime > 2000) {
+        Serial.println("No data recived");
+        lastPrintTime = millis();
+    }
 
     delay(5);
 }

@@ -19,12 +19,15 @@ int led_pin = 5;
 // Andra ESP MAC =  58:BF:25:37:F8:C8 COM 14
 // Nandanas ESP = 58:BF:25:36:FC:28 COM 19
 // ESP32 c3 MAC: 68:67:25:AD:DD:D4
+// ESP32 S3 FC Control board v0.1 MAC 34:85:18:5C:4E:F0
 
 #include "WiFi.h"
 #include "esp_now.h"
 
 // uint8_t broadcastAddress[] = {0x58, 0xBF, 0x25, 0x37, 0xF8, 0xC8};
-uint8_t broadcastAddress[] = {0x68, 0x67, 0x25, 0xAD, 0xDD, 0xD4};
+// uint8_t broadcastAddress[] = {0x68, 0x67, 0x25, 0xAD, 0xDD, 0xD4};
+uint8_t broadcastAddress[] = {0x34, 0x85, 0x18, 0x5C, 0x4E, 0xF0};
+
 
 // Structure example to send data
 // Must match the receiver structure

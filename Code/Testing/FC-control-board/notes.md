@@ -7,6 +7,11 @@
 - [ ] 5v from USB goes directly to regulated 5v rail (can lead to excessive current draw from/to USB). Should be separate or have reverse current protection.
 - [ ] Servo pin header had wrong pinout. Should be 5v, GND, signal. Not signal, 5v, GND.
 - [ ] Negative battery terminal is not connected.
+- [ ] Silkscreen needs to be improved.
+  - [ ] Add pinout for servo header.
+  - [ ] Add pinout for battery header.
+  - [ ] Label for Reset and Boot buttons needs to be fixed.
+- [ ] Screw hole is under the USB connector. Connector should be moved to the side.
 
 #### Improvements
 - [ ] Improve Voltage/Current protection for USB and battery.
