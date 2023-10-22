@@ -25,3 +25,22 @@ Mac address for the board can be gotten by using `env:print-mac` and reading ser
 - FC Control board v0.1: 34:85:18:5C:4E:F0
 ```
 
+### FC Control board v1.1
+#### Addressed issues
+- [x] Changed footprint for the ESP32-S3 (easier to solder)
+- [x] Servo pin header switched to GND, 5V, signal
+- [x] Negative battery terminal is not connected.
+- [x] Silkscreen needs to be improved. (sort of)
+  - [x] Add pinout for battery header.
+  - [x] Add pinout for servo header.
+  - [x] Label for Reset and Boot buttons needs to be fixed.
+- [x] Screw hole is under the USB connector. Connector should be moved to the side.
+- [x] Components at the back block mounting of back wing.
+#### Additional features
+- [x] Added a buzzer
+#### What's left
+  - [ ] 5v from USB goes directly to regulated 5v rail (can lead to excessive current draw from/to USB). Should be separate or have reverse current protection.
+  - [ ] Improve Voltage/Current protection for USB and battery.
+  - [ ] Add connector with more GPIO pins for future expansion.
+  - [ ] Test opamp circuit for halleffect encoder. Implement on pcb if works well.
+  - [ ] 3.3v and 5v routing is not well done, can be improved.
