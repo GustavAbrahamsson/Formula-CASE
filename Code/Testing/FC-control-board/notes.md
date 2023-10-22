@@ -16,6 +16,7 @@
 #### Improvements
 - [ ] Improve Voltage/Current protection for USB and battery.
 - [ ] Add connector with more GPIO pins for future expansion.
+- [ ] Test opamp circuit for halleffect encoder. Implement on pcb if works well.
 ## MAC address
 Mac address for the board can be gotten by using `env:print-mac` and reading serial output.
 ```
