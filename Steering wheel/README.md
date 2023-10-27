@@ -7,3 +7,5 @@
   - Use 'longer' push-buttons with the same footprint
 - The battery pins need labels
 - The holes are not aligned for the MPU6050 footprint
+- Cables
+  - Move to a single PCB with no cables
