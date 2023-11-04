@@ -498,7 +498,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "16_Channel_LED_Strip.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
