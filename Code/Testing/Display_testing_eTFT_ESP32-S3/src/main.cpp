@@ -123,6 +123,7 @@ void loop()
 {
   Serial.println("loop()");
 
+
   for (int i = 1; i <= 8; i++)
   {
     tft_display.setTextColor(0xFFFF);
@@ -144,20 +145,22 @@ void loop()
   delay(250);
 }
 
-
 // #include <Arduino.h>
-// #include <TFT_eSPI.h> // Hardware-specific library
+// #include <TFT_eSPI.h>
 // #include <SPI.h>
 
 // TFT_eSPI tft_display = TFT_eSPI(); 
-
 
 // void setup() {
 //   delay(1000);
 //   Serial.begin(115200);
 //   Serial.println("Program started");
+  
+//   delay(1000);
 
 //   tft_display.begin();
+  
+//   delay(1000);
 
 //   tft_display.setRotation(1);
 //   tft_display.fillScreen(TFT_BLACK);
@@ -167,6 +170,14 @@ void loop()
 
 // void loop() {
 //   Serial.println("loop()");
+  
+  
+//   //Serial.println("SS = CS: " + String(SS));
+//   Serial.println("TFT_RST: " + String(TFT_RST));
+//   Serial.println("TFT_DC: " + String(TFT_DC));
+//   Serial.println("MOSI: " + String(MOSI));
+//   Serial.println("SCK: " + String(SCK));
+//   Serial.println("(MISO: " + String(MISO) + ")\n");
 
 //   tft_display.fillScreen(TFT_GREEN);
 //   delay(3000);
