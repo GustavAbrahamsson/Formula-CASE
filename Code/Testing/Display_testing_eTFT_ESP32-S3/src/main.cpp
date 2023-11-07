@@ -1,8 +1,12 @@
 
-
 #include <Arduino.h>
-#include <TFT_eSPI.h> // Hardware-specific library
+#include <TFT_eSPI.h> // For the THT-display
+#include <Wire.h>
+#include "TLC59116.h"
 #include <SPI.h>
+
+// Pins
+#define LED_RESET GPIO_NUM_42
 
 // Important: Setup file 'Setup70b_ESP32_S3_ILI9341.h' is changed to correspond to the used pins
 TFT_eSPI tft_display = TFT_eSPI(); 
@@ -107,6 +111,10 @@ void setup(void)
   Serial.println("Program started");
 
   tft_display.begin();
+
+  // Keep the LED circuit on
+  pinMode(LED_RESET, OUTPUT);
+  digitalWrite(LED_RESET, 1);
   
   // Landscape
   tft_display.setRotation(1);
@@ -144,6 +152,8 @@ void loop()
 
   delay(250);
 }
+
+// ---------------------------------------------
 
 // #include <Arduino.h>
 // #include <TFT_eSPI.h>
@@ -186,4 +196,77 @@ void loop()
 //   tft_display.fillScreen(TFT_RED);
 //   delay(3000);
   
+// }
+
+
+
+
+
+
+
+// ------------------------------------------
+// /*
+// Scanning...
+// I2C device found at address 0x60  !
+// I2C device found at address 0x68  !
+// I2C device found at address 0x6B  !
+// done*/
+
+
+// // I2C address scanner program
+// #include <Wire.h>
+// #include <Arduino.h>
+
+// void setup()
+// {
+//   Wire.begin();
+//   Serial.begin(115200);
+//   Serial.println("I2C Scanner");
+
+  
+//   // Temp for LED circuit
+//   pinMode(GPIO_NUM_42, OUTPUT);
+//   digitalWrite(GPIO_NUM_42, 1);
+// }
+
+// void loop()
+// {
+//   byte error, address;
+//   int nDevices;
+
+//   Serial.println("Scanning...");
+
+//   nDevices = 0;
+//   for(address = 1; address < 127; address++ )
+//   {
+//     Wire.beginTransmission(address);
+//     error = Wire.endTransmission();
+
+//     if (error == 0)
+//     {
+//       Serial.print("I2C device found at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.print(address,HEX);
+//       Serial.println("  !");
+
+//       nDevices++;
+//     }
+//     else if (error==4)
+//     {
+//       Serial.print("Unknown error at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.println(address,HEX);
+//     }
+//   }
+
+//   if (nDevices == 0)
+//     Serial.println("No I2C devices found");
+//   else
+//     Serial.println("done");
+
+//   delay(5000); // wait 5 seconds for next scan
 // }
