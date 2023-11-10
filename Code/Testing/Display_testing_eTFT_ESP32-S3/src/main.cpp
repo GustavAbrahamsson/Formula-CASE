@@ -2,8 +2,11 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h> // For the THT-display
 #include <Wire.h>
-#include "TLC59116.h"
 #include <SPI.h>
+
+#include "TLC_LED_Array.h"
+
+
 
 // Pins
 #define LED_RESET GPIO_NUM_42
@@ -170,20 +173,25 @@ void loop()
     delay(2);
   }
   delay(1000);
-  // Ramp all
-  for(int j = 0; j < 256; j++){
-    for(int i = 0; i < TLC_NUM_LEDS; i++){
-      tlc_LED_driver.analogWrite(i, 255 - j);
+
+  while(true){
+    // Ramp all
+    for(int j = 0; j < 256; j++){
+      for(int i = 0; i < TLC_NUM_LEDS; i++){
+        tlc_LED_driver.analogWrite(i, 255 - j);
+      }
+      delay(2);
     }
-    delay(2);
-  }
-  // Ramp all
-  for(int j = 0; j < 256; j++){
-    for(int i = 0; i < TLC_NUM_LEDS; i++){
-      tlc_LED_driver.analogWrite(i, j);
+    // Ramp all
+    for(int j = 0; j < 256; j++){
+      for(int i = 0; i < TLC_NUM_LEDS; i++){
+        tlc_LED_driver.analogWrite(i, j);
+      }
+      delay(2);
     }
-    delay(2);
   }
+
+  
   delay(1000);
   for(int i = 0; i < TLC_NUM_LEDS; i++){
     tlc_LED_driver.analogWrite(i, 0);
