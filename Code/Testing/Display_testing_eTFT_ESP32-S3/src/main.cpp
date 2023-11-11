@@ -6,14 +6,12 @@
 
 #include "TLC_LED_Array.h"
 
-
-
 // Pins
 #define LED_RESET GPIO_NUM_42
 #define LED_DRIVER_ADDR 0x60 // ?
-#define TLC_NUM_LEDS 15
 
-TLC59116 tlc_LED_driver(LED_DRIVER_ADDR);
+// 15-LED array object
+TLC_LED_Array tlc(LED_DRIVER_ADDR, LED_RESET);
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V
 
 // Important: Setup file 'Setup70b_ESP32_S3_ILI9341.h' is changed to correspond to the used pins
@@ -116,31 +114,34 @@ void setup(void)
   delay(1000);
 
   Serial.begin(115200);
-  Serial.println("Program started");
-
-  // Keep the LED circuit on
-  pinMode(LED_RESET, OUTPUT);
-  digitalWrite(LED_RESET, 1);
+  //Serial.println("Program started");
 
   delay(100);
 
-  tlc_LED_driver.begin();
+  //Serial.println("tlc.begin()");
+  tlc.begin();
+  
+  delay(100);
 
+  //Serial.println("tft_display.begin()");
   tft_display.begin();
 
+  delay(100);
+
   // Turn off all the LEDs
-  for(int i = 0; i < TLC_NUM_LEDS; i++){
-    tlc_LED_driver.analogWrite(i, 0);
-  }
+  //Serial.println("tlc.reset_LEDs()");
+  tlc.reset_LEDs();
+
+  delay(500);
+
   for(int j = 0; j < 2; j++){
-    // Ramp through the LEDs
+    // "Slide"
     for(int i = 0; i < TLC_NUM_LEDS; i++){
-      tlc_LED_driver.analogWrite(i, 100);
+      tlc.set_LED(i, 100);
       delay(25);
-      tlc_LED_driver.analogWrite(i, 0);
+      tlc.set_LED(i, 0);
     }
   }
-  
   
   // Landscape
   tft_display.setRotation(1);
@@ -157,54 +158,94 @@ void loop()
 {
   Serial.println("loop()");
 
-  // Slide
-  for(int i = 0; i < TLC_NUM_LEDS; i++){
-    tlc_LED_driver.analogWrite(i, 127);
-    delay(25);
-    tlc_LED_driver.analogWrite(i, 0);
-  }
+  tlc.ramp_set(0);
+  delay(500);
+  tlc.ramp_set(10);
+  delay(500);
+  tlc.ramp_set(20);
+  delay(500);
+  tlc.ramp_set(40);
+  delay(500);
+  tlc.ramp_set(60);
+  delay(500);
+  tlc.ramp_set(100);
+  delay(500);
+  tlc.ramp_set(100);
+  delay(500);
+  tlc.ramp_set(150);
+  delay(500);
+  tlc.ramp_set(200);
+  delay(500);
+  tlc.ramp_set(250);
+  delay(500);
+  tlc.ramp_set(255);
+  delay(500);
+  tlc.ramp_set(250);
+  delay(500);
+  tlc.ramp_set(200);
+  delay(500);
+  tlc.ramp_set(150);
+  delay(500);
+  tlc.ramp_set(100);
+  delay(500);
+  tlc.ramp_set(80);
+  delay(500);
+  tlc.ramp_set(60);
+  delay(500);
+  tlc.ramp_set(40);
+  delay(500);
+  tlc.ramp_set(20);
   delay(500);
 
-  // Ramp all
-  for(int j = 0; j < 256; j++){
-    for(int i = 0; i < TLC_NUM_LEDS; i++){
-      tlc_LED_driver.analogWrite(i, j);
-    }
-    delay(2);
-  }
-  delay(1000);
 
-  while(true){
-    // Ramp all
-    for(int j = 0; j < 256; j++){
-      for(int i = 0; i < TLC_NUM_LEDS; i++){
-        tlc_LED_driver.analogWrite(i, 255 - j);
-      }
-      delay(2);
-    }
-    // Ramp all
-    for(int j = 0; j < 256; j++){
-      for(int i = 0; i < TLC_NUM_LEDS; i++){
-        tlc_LED_driver.analogWrite(i, j);
-      }
-      delay(2);
-    }
-  }
+
+  // // Slide
+  // for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //   tlc.set_LED(i, 127);
+  //   delay(25);
+  //   tlc.set_LED(i, 0);
+  // }
+  // delay(250);
+
+  // // Ramp all
+  // for(int j = 0; j < 256; j++){
+  //   for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //     tlc.set_LED(i, j);
+  //   }
+  //   delay(2);
+  // }
+  // delay(250);
 
   
-  delay(1000);
-  for(int i = 0; i < TLC_NUM_LEDS; i++){
-    tlc_LED_driver.analogWrite(i, 0);
-    delay(50);
-  }
-  delay(250);
-  for(int i = 0; i < TLC_NUM_LEDS; i++){
-    tlc_LED_driver.analogWrite(i, 255);
-    delay(50);
-  }
-  for(int i = 0; i < TLC_NUM_LEDS; i++){
-    tlc_LED_driver.analogWrite(i, 0);
-  }
+  // // Ramp all
+  // for(int j = 0; j < 256; j++){
+  //   for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //     tlc.set_LED(i, 255 - j);
+  //   }
+  //   delay(1);
+  // }
+  // // Ramp all
+  // for(int j = 0; j < 256; j++){
+  //   for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //     tlc.set_LED(i, j);
+  //   }
+  //   delay(1);
+  // }
+  
+
+  
+  // delay(1000);
+  // for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //   tlc.set_LED(i, 0);
+  //   delay(50);
+  // }
+  // delay(250);
+  // for(int i = 0; i < TLC_NUM_LEDS; i++){
+  //   tlc.set_LED(i, 127);
+  //   delay(50);
+  // }
+
+  tlc.reset_LEDs();
 
 
   for (int i = 1; i <= 8; i++)
@@ -218,14 +259,11 @@ void loop()
     {
       draw_rpm_gauge(j / 50);
       
-      for(int i = 0; i < (j / 50) * 15; i++){
-        tlc_LED_driver.analogWrite(i, 255);
-      }
+      tlc.ramp_set(255.0 * j/50);
+
       delay(10 * i);
     }
-    for(int i = 0; i < TLC_NUM_LEDS; i++){
-      tlc_LED_driver.analogWrite(i, 0);
-    }
+
     tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
     tft_display.setTextColor(0x0000);
     tft_display.setTextSize(GEAR_FONT_SIZE);
