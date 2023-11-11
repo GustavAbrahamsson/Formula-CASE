@@ -20,11 +20,16 @@
 
 class TLC_LED_Array{
   private:
+
     int address;
     uint8_t reset_pin;
-    uint8_t global_brightness = 127;
+    uint8_t global_brightness = 50;
     TLC59116 tlc;
     int8_t current_ramp_LED = -1;
+    String latest_function;
+    bool ramp_blue_fixed = false;
+
+    int level_to_LED(uint8_t level);
 
   public:
     TLC_LED_Array(int addr, uint8_t reset);
@@ -33,8 +38,9 @@ class TLC_LED_Array{
     int set_all_LEDs(uint8_t val);
     int reset_LEDs();
     int set_LEDs_by_color(String color, uint8_t val);
-    int ramp_set(uint8_t level, bool blue_fixed);
     int ramp_set(uint8_t level);
+    int ramp_init(uint8_t level, bool blue_fixed);
+    int ramp_init(uint8_t level);
 };
 
 #endif

@@ -160,42 +160,38 @@ void loop()
 
   tlc.ramp_set(0);
   delay(500);
-  tlc.ramp_set(10);
-  delay(500);
+  
+  for(int k = 0; k < 2; k++){
+    
+    for(int i = 0; i < 255; i++){
+      tlc.ramp_set(i);
+      delay(5);
+    }
+    for(int i = 0; i < 255; i++){
+      tlc.ramp_set(255-i);
+      delay(5);
+    }
+
+  }
+
+  
   tlc.ramp_set(20);
-  delay(500);
-  tlc.ramp_set(40);
-  delay(500);
-  tlc.ramp_set(60);
-  delay(500);
-  tlc.ramp_set(100);
-  delay(500);
-  tlc.ramp_set(100);
-  delay(500);
-  tlc.ramp_set(150);
-  delay(500);
+  delay(1000);
+
   tlc.ramp_set(200);
-  delay(500);
-  tlc.ramp_set(250);
-  delay(500);
-  tlc.ramp_set(255);
-  delay(500);
-  tlc.ramp_set(250);
-  delay(500);
-  tlc.ramp_set(200);
-  delay(500);
-  tlc.ramp_set(150);
-  delay(500);
+  delay(1000);
+  
   tlc.ramp_set(100);
-  delay(500);
-  tlc.ramp_set(80);
-  delay(500);
-  tlc.ramp_set(60);
-  delay(500);
-  tlc.ramp_set(40);
-  delay(500);
-  tlc.ramp_set(20);
-  delay(500);
+  delay(1000);
+  
+  tlc.ramp_set(150);
+  delay(1000);
+
+  
+  tlc.ramp_set(30);
+  delay(1000);
+  tlc.ramp_set(250);
+  delay(1000);
 
 
 
@@ -246,7 +242,7 @@ void loop()
   // }
 
   tlc.reset_LEDs();
-
+  tlc.ramp_init(0, true);
 
   for (int i = 1; i <= 8; i++)
   {
