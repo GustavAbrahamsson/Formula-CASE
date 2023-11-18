@@ -44,3 +44,19 @@ Mac address for the board can be gotten by using `env:print-mac` and reading ser
   - [ ] Add connector with more GPIO pins for future expansion.
   - [ ] Test opamp circuit for halleffect encoder. Implement on pcb if works well.
   - [ ] 3.3v and 5v routing is not well done, can be improved.
+  - [ ] Add connector for the camera
+  - [ ] Add connectors for the hall-effect sensors
+  - [ ] Add tail-light LED
+  - [ ] Decrease bat_level measurements from reading 3.3V to 3.0V as max battery voltage (ESP32 ADC is shit)
+  - [ ] Fix silkscreen text sizing
+
+
+### FC Control board v1.2
+#### Addressed issues
+  - [x] Add connector for the camera
+  - [x] Add connectors for the hall-effect sensors (https://www.mouser.se/ProductDetail/Texas-Instruments/DRV5056A2QLPGM?qs=vdi0iO8H4N3IxI89EIhQ7w%3D%3D Are tested and give a [0.1, 1.1]V range to ADC)
+  - [x] Decrease bat_level measurements from reading 3.3V to 3.0V as max battery voltage (ESP32 ADC is shit)
+  - [x] Fix silkscreen text sizing
+
+#### Additional features
+  - [x] Add tail-light LED
