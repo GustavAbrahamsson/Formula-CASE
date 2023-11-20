@@ -60,3 +60,6 @@ Mac address for the board can be gotten by using `env:print-mac` and reading ser
 
 #### Additional features
   - [x] Add tail-light LED
+
+#### What's left
+  - [ ] Add IMU
