@@ -7,6 +7,29 @@
 #include "TLC_LED_Array.h"
 
 // Pins
+#define BAT_LEVEL_PIN GPIO_NUM_1
+#define VOLUME_PIN GPIO_NUM_2
+
+#define BTN1_PIN GPIO_NUM_4
+#define BTN2_PIN GPIO_NUM_5
+#define BTN3_PIN GPIO_NUM_6
+#define BTN4_PIN GPIO_NUM_7
+
+#define L_TRIGGER_PIN GPIO_NUM_17
+#define R_TRIGGER_PIN GPIO_NUM_18
+
+#define BUZZ_2_PIN GPIO_NUM_41
+#define BUZZ_1_PIN GPIO_NUM_40
+#define BZR_1_CHANNEL 0
+#define BZR_2_CHANNEL 5
+
+#define L_PADDLE_PIN GPIO_NUM_39
+#define R_PADDLE_PIN GPIO_NUM_38
+
+#define ENC_B_PIN GPIO_NUM_48
+#define ENC_A_PIN GPIO_NUM_47
+#define ENC_SW_PIN GPIO_NUM_21
+
 #define LED_RESET GPIO_NUM_42
 #define LED_DRIVER_ADDR 0x60 // ?
 
@@ -108,10 +131,64 @@ void remove_text(std::string text)
   tft_display.setTextColor(0xFFFF);
 }
 
+void buzz1(uint16_t freq){
+   ledcWriteTone(BZR_1_CHANNEL, freq);
+}
+
+void buzz2(uint16_t freq){
+   ledcWriteTone(BZR_2_CHANNEL, freq);
+}
+
+void setup_pins(){
+  #define BAT_LEVEL_PIN GPIO_NUM_1
+  #define VOLUME_PIN GPIO_NUM_2
+
+  #define BTN1_PIN GPIO_NUM_4
+  #define BTN2_PIN GPIO_NUM_5
+  #define BTN3_PIN GPIO_NUM_6
+  #define BTN4_PIN GPIO_NUM_7
+
+  #define L_TRIGGER_PIN GPIO_NUM_17
+  #define R_TRIGGER_PIN GPIO_NUM_18
+
+  #define BUZZ_2_PIN GPIO_NUM_41
+  #define BUZZ_1_PIN GPIO_NUM_40
+
+  #define L_PADDLE_PIN GPIO_NUM_39
+  #define R_PADDLE_PIN GPIO_NUM_38
+
+  pinMode(BAT_LEVEL_PIN, INPUT);
+  pinMode(VOLUME_PIN, INPUT);
+
+  pinMode(BTN1_PIN, INPUT_PULLDOWN);
+  pinMode(BTN2_PIN, INPUT_PULLDOWN);
+  pinMode(BTN3_PIN, INPUT_PULLDOWN);
+  pinMode(BTN4_PIN, INPUT_PULLDOWN);
+  
+  pinMode(L_TRIGGER_PIN, INPUT);
+  pinMode(R_TRIGGER_PIN, INPUT);
+
+  ledcAttachPin(BUZZ_1_PIN, BZR_1_CHANNEL);
+  ledcAttachPin(BUZZ_2_PIN, BZR_2_CHANNEL);
+}
+
+void beep_beep(){
+  buzz1(1000);
+  delay(100);
+  buzz1(0);
+  delay(50);
+  buzz2(1000);
+  delay(100);
+  buzz2(0);
+}
 
 void setup(void)
 {
   delay(1000);
+
+  setup_pins();
+
+  beep_beep();
 
   Serial.begin(115200);
   //Serial.println("Program started");
@@ -131,8 +208,6 @@ void setup(void)
   // Turn off all the LEDs
   //Serial.println("tlc.reset_LEDs()");
   tlc.reset_LEDs();
-
-  delay(500);
 
   for(int j = 0; j < 2; j++){
     // "Slide"
@@ -161,37 +236,71 @@ void loop()
   tlc.ramp_set(0);
   delay(500);
   
-  for(int k = 0; k < 2; k++){
-    
-    for(int i = 0; i < 255; i++){
-      tlc.ramp_set(i);
-      delay(5);
-    }
-    for(int i = 0; i < 255; i++){
-      tlc.ramp_set(255-i);
-      delay(5);
+
+  tlc.reset_LEDs();
+  tlc.ramp_init(0, true);
+
+  for (int i = 1; i <= 8; i++)
+  {
+    tft_display.setTextColor(0xFFFF);
+    tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
+    tft_display.setTextSize(GEAR_FONT_SIZE);
+    tft_display.print(i);
+
+    for (double j = 10; j <= 50; j++)
+    {
+      draw_rpm_gauge(j / 50);
+
+      // if (((int)j % 2) == 0){
+      //   buzz1(1500 + 500 * j/50);
+      // }
+      
+      tlc.ramp_set(255.0 * j/50);
+
+      delay(10 * i);
     }
 
+    tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
+    tft_display.setTextColor(0x0000);
+    tft_display.setTextSize(GEAR_FONT_SIZE);
+    tft_display.print(i);
   }
 
-  
-  tlc.ramp_set(20);
-  delay(1000);
+  delay(250);
 
-  tlc.ramp_set(200);
-  delay(1000);
-  
-  tlc.ramp_set(100);
-  delay(1000);
-  
-  tlc.ramp_set(150);
-  delay(1000);
+
+}
+  // for(int k = 0; k < 2; k++){
+    
+  //   for(int i = 0; i < 255; i++){
+  //     tlc.ramp_set(i);
+  //     delay(5);
+  //   }
+  //   for(int i = 0; i < 255; i++){
+  //     tlc.ramp_set(255-i);
+  //     delay(5);
+  //   }
+
+  // }
 
   
-  tlc.ramp_set(30);
-  delay(1000);
-  tlc.ramp_set(250);
-  delay(1000);
+  // tlc.ramp_set(20);
+  // delay(1000);
+
+  // tlc.ramp_set(200);
+  // delay(1000);
+  
+  // tlc.ramp_set(100);
+  // delay(1000);
+  
+  // tlc.ramp_set(150);
+  // delay(1000);
+
+  
+  // tlc.ramp_set(30);
+  // delay(1000);
+  // tlc.ramp_set(250);
+  // delay(1000);
 
 
 
@@ -241,33 +350,33 @@ void loop()
   //   delay(50);
   // }
 
-  tlc.reset_LEDs();
-  tlc.ramp_init(0, true);
+//   tlc.reset_LEDs();
+//   tlc.ramp_init(0, true);
 
-  for (int i = 1; i <= 8; i++)
-  {
-    tft_display.setTextColor(0xFFFF);
-    tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
-    tft_display.setTextSize(GEAR_FONT_SIZE);
-    tft_display.print(i);
+//   for (int i = 1; i <= 8; i++)
+//   {
+//     tft_display.setTextColor(0xFFFF);
+//     tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
+//     tft_display.setTextSize(GEAR_FONT_SIZE);
+//     tft_display.print(i);
 
-    for (double j = 10; j <= 50; j++)
-    {
-      draw_rpm_gauge(j / 50);
+//     for (double j = 10; j <= 50; j++)
+//     {
+//       draw_rpm_gauge(j / 50);
       
-      tlc.ramp_set(255.0 * j/50);
+//       tlc.ramp_set(255.0 * j/50);
 
-      delay(10 * i);
-    }
+//       delay(10 * i);
+//     }
 
-    tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
-    tft_display.setTextColor(0x0000);
-    tft_display.setTextSize(GEAR_FONT_SIZE);
-    tft_display.print(i);
-  }
+//     tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2 + 2, gear_text_pos_y);
+//     tft_display.setTextColor(0x0000);
+//     tft_display.setTextSize(GEAR_FONT_SIZE);
+//     tft_display.print(i);
+//   }
 
-  delay(250);
-}
+//   delay(250);
+// }
 
 // ---------------------------------------------
 
