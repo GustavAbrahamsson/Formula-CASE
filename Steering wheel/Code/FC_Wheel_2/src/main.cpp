@@ -57,6 +57,9 @@ float read_battery_voltage(){
   return battery_voltage_coeff * analogRead(BAT_LEVEL_PIN);
 }
 
+/* Filter the raw data from digital input
+@param input Address to an 'Input_Peripheral'
+*/
 template <typename Func>
 void debounce_input(Input_Peripheral<Func>* input){
   // New value detected, init debouncing

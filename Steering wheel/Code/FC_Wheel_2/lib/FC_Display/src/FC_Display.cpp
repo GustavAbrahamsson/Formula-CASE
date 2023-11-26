@@ -17,7 +17,8 @@ void FC_Display::begin(){
 // Initialize the gear indicator
 void FC_Display::init_gear(){
   // Initialize gear indicator
-  FC_Display::tft_display->drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y, gear_indicator_width, gear_text_size * 8, 0xFFFF);
+  FC_Display::tft_display->drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y,
+                                            gear_indicator_width, gear_text_size * 8, 0xFFFF);
   change_gear(indicated_gear);
 }
 
@@ -26,15 +27,33 @@ void FC_Display::init_gear(){
   @param gear Which gear index to show, with '0' being neutral [0, GEAR_INDEX_MAX]
 */
 void FC_Display::change_gear(uint8_t gear){
-  FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE);
+  String out;
   FC_Display::tft_display->setTextFont(GEAR_FONT);
-  FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
-  remove_text(String(indicated_gear));
-  FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
+  if(indicated_gear == 0) {
+    out = "N";
+    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
+    FC_Display::tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 15);
+  } else {
+    out = String(indicated_gear);
+    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
+  FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 3);
+  }
+  remove_text(out);
   uint8_t gear_val = constrain(gear, 0, GEAR_INDEX_MAX);
   indicated_gear = gear_val; // Update local "current_gear"
-  String out = String(gear_val);
-  if(out == 0) out = "N"; // Display "N" as neutral if gear '0' is active
+  if(indicated_gear == 0) {
+    out = "N";
+    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
+    FC_Display::tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 15);
+  } else {
+    out = String(gear_val);
+    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
+    FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 3);
+  }
   FC_Display::tft_display->print(out);
 }
 
