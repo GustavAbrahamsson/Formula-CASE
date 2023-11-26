@@ -35,7 +35,7 @@ int TLC_LED_Array::set_LED(uint8_t i_led, uint8_t val){
   uint8_t output = (float)(val * val) / 255.0;
 
   // Scale down the green/blue LEDs to match the reds
-  if((i_led < TLC_GREEN_LEDS_START) && (i_led >= TLC_BLUE_LEDS_START)){
+  if((i_led < TLC_GREEN_LEDS_START) || (i_led >= TLC_BLUE_LEDS_START)){
     output *= TLC_BLUE_GREEN_SCALING;
   }
 

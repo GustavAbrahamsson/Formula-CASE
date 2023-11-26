@@ -16,7 +16,7 @@
 #define TLC_RED_LEDS_START 5
 #define TLC_BLUE_LEDS_START 10
 
-#define TLC_BLUE_GREEN_SCALING 0.8
+#define TLC_BLUE_GREEN_SCALING 0.7
 
 class TLC_LED_Array{
   private:

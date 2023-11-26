@@ -1,4 +1,16 @@
-.pio
+# Nightmare fuel no make sure that two files are not ignored
+/.pio/*
+!/.pio/libdeps
+/.pio/libdeps/*
+!/.pio/libdeps/esp32-s3-devkitc-1
+/.pio/libdeps/esp32-s3-devkitc-1/*
+!/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI
+/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI/*
+!/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI/User_Setup_Select.h
+!/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI/User_Setups
+/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI/User_Setups/*
+!/.pio/libdeps/esp32-s3-devkitc-1/TFT_eSPI/User_Setups/Setup70b_ESP32_S3_ILI9341.h
+
 .vscode/.browse.c_cpp.db*
 .vscode/c_cpp_properties.json
 .vscode/launch.json

@@ -1,4 +1,3 @@
-
 #include <Arduino.h>
 #include <TFT_eSPI.h> // For the THT-display
 #include <Wire.h>
