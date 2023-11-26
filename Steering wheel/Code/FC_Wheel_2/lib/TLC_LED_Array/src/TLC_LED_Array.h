@@ -1,6 +1,8 @@
 // Class definition for the 15-LED RPM gauge using
 // a TLC59116 16CH I2C LED Driver 
 
+#pragma once
+
 #ifndef TLC_LED_Array_H
 #define TLC_LED_Array_H
 

@@ -1,5 +1,7 @@
 // Class definition for the display
 
+#pragma once
+
 #include <TFT_eSPI.h> // Main library used
 
 #define SCREEN_WIDTH_FC 320

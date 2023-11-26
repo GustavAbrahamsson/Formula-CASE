@@ -10,46 +10,11 @@
 // For the TFT SPI 240*320 display
 #include "FC_Display.h"
 
-// Pins
-#define BAT_LEVEL_PIN GPIO_NUM_1
-#define VOLUME_PIN GPIO_NUM_2
+// Global variables and definitions
+#include "Global_Variables.h"
 
-#define BTN1_PIN GPIO_NUM_4
-#define BTN2_PIN GPIO_NUM_5
-#define BTN3_PIN GPIO_NUM_6
-#define BTN4_PIN GPIO_NUM_7
-
-#define L_TRIGGER_PIN GPIO_NUM_17
-#define R_TRIGGER_PIN GPIO_NUM_18
-
-#define BUZZ_2_PIN GPIO_NUM_41
-#define BUZZ_1_PIN GPIO_NUM_40
-#define BZR_1_CHANNEL 0
-#define BZR_2_CHANNEL 5
-
-#define L_PADDLE_PIN GPIO_NUM_39
-#define R_PADDLE_PIN GPIO_NUM_38
-
-#define ENC_B_PIN GPIO_NUM_48
-#define ENC_A_PIN GPIO_NUM_47
-#define ENC_SW_PIN GPIO_NUM_21
-
-#define LED_RESET GPIO_NUM_42
-#define LED_DRIVER_ADDR 0x60 // ?
-
-// General constants
-#define BUTTON_DEBOUNCE_MS 100
-const float battery_voltage_coeff = 4.13 / 3800.0;
-
-// 15-LED array object
-// All 15 LEDs at max brightness: 87 mA @ 4.03 V
-TLC_LED_Array tlc(LED_DRIVER_ADDR, LED_RESET);
-
-// Instance of the display class
-TFT_eSPI tft_disp = TFT_eSPI();
-
-// Wheel display sending the address
-FC_Display disp(&tft_disp);
+// Functions for all the peripherals
+#include "Peripheral_Functions.h"
 
 void buzz1(uint16_t freq){
   ledcWriteTone(BZR_1_CHANNEL, freq);
@@ -92,6 +57,78 @@ float read_battery_voltage(){
   return battery_voltage_coeff * analogRead(BAT_LEVEL_PIN);
 }
 
+template <typename Func>
+void debounce_input(Input_Peripheral<Func>* input){
+  // New value detected, init debouncing
+    if((input->raw_val != input->current_val) && !input->debounce_state){
+      Serial.println("Debounce started, old: " + String(input->current_val) + 
+              " new: " + String(input->raw_val));
+      input->current_val = input->raw_val; // Immediately update the value in use
+
+      // Call the assigned function to that specific input and send in the current state
+      input->assigned_function(input->current_val);
+
+      input->debounce_state = true;
+      input->input_streak = 1;
+    }else if(input->debounce_state){
+      // If enough samples are identical in a row, assume bouncing has settled
+      if (input->input_streak >= PADDLE_DEBOUNCE_STREAK){
+        Serial.println("Debounce ended, new: "+String(input->raw_val)+
+              ", num_same = "+String(input->input_streak)+"\n\n");
+        input->debounce_state = false;
+        input->input_streak = 0;
+      }
+      // Count streak of the same value during debouncing
+      else if (input->raw_val == input->last_val) {
+        input->input_streak++;
+      }
+      else {
+        input->input_streak = 1;
+      }
+      Serial.println("Num same: " + String(input->input_streak));
+    }
+
+    input->last_val = input->raw_val;
+}
+
+// The task that handles reading digital inputs
+void button_task(void *pvParameter){
+
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / BUTTON_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  // Initialise the xLastWakeTime variable with the current time.
+  xLastWakeTime = xTaskGetTickCount();
+  bool debounce_paddle_R = false;
+  bool last_paddle_R = false;
+  uint16_t num_same_paddle_R = 1;
+
+  bool debounce_paddle_L = false;
+  uint16_t num_same_paddle_L = 1;
+
+
+  while(1){
+    // Wait for the next cycle.
+    xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
+    // xWasDelayed value can be used to determine whether a deadline was missed
+    // if the code here took too long.
+    
+    Paddle_R.raw_val = digitalRead(R_PADDLE_PIN);
+    Paddle_L.raw_val = digitalRead(L_PADDLE_PIN);
+
+    disp.battery_SoC(read_battery_voltage());
+
+    debounce_input(&Paddle_R);
+    debounce_input(&Paddle_L);
+
+    
+  }
+} 
+
+void init_tasks(){
+  xTaskCreatePinnedToCore(button_task, "button_task", 2048, NULL, 1, NULL, BUTTON_TASK_CORE);
+}
+
 void setup(void)
 {
   delay(1000);
@@ -116,7 +153,7 @@ void setup(void)
     // "Slide"
   for(int i = 0; i < TLC_NUM_LEDS; i++){
     tlc.set_LED(i, 100);
-    delay(25);
+    delay(15);
     tlc.set_LED(i, 0);
   }
   //}
@@ -126,53 +163,50 @@ void setup(void)
   tlc.ramp_init(0);
 
   disp.init_gear();
-}
-uint16_t throttle_R;
-uint16_t pitch;
-bool btn1_state;
 
-uint8_t current_gear = 0;
-bool paddle_R = 0;
-bool paddle_L = 0;
-bool new_paddle_R = 0;
-bool new_paddle_L = 0;
-uint32_t last_paddle_L_time = 0;
-uint32_t last_paddle_R_time = 0;
+  init_tasks();
+}
+
 
 void loop()
 {
 
-
+  while(1){
+    vTaskDelay(10000 / portTICK_RATE_MS);
+  }
+  
   new_paddle_R = digitalRead(R_PADDLE_PIN);
   new_paddle_L = digitalRead(L_PADDLE_PIN);
 
   disp.battery_SoC(read_battery_voltage());
 
+  Serial.println(analogRead(BAT_LEVEL_PIN));
+
   //Serial.println(new_paddle_L);
 
-  if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > BUTTON_DEBOUNCE_MS)){
-    paddle_R = new_paddle_R;
-    last_paddle_R_time = millis();
-    Serial.println("Paddle R: " + String(paddle_R));
+  // if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > BUTTON_DEBOUNCE_MS)){
+  //   paddle_R = new_paddle_R;
+  //   last_paddle_R_time = millis();
+  //   Serial.println("Paddle R: " + String(paddle_R));
 
-    if(paddle_R){
-      current_gear++;
-      disp.change_gear(current_gear);
-      Serial.println("Gear: " + String(current_gear));
-    }
-  }
+  //   if(paddle_R){
+  //     current_gear++;
+  //     disp.change_gear(current_gear);
+  //     Serial.println("Gear: " + String(current_gear));
+  //   }
+  // }
 
-  if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > BUTTON_DEBOUNCE_MS)){
-    paddle_L = new_paddle_L;
-    last_paddle_L_time = millis();
+  // if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > BUTTON_DEBOUNCE_MS)){
+  //   paddle_L = new_paddle_L;
+  //   last_paddle_L_time = millis();
 
-    if(paddle_L){
-      if(current_gear > 0){
-        current_gear--;
-        disp.change_gear(current_gear);
-      }
-    }
-  }
+  //   if(paddle_L){
+  //     if(current_gear > 0){
+  //       current_gear--;
+  //       disp.change_gear(current_gear);
+  //     }
+  //   }
+  // }
 
   
 
