@@ -1,9 +1,14 @@
+
 #include <Arduino.h>
-#include <TFT_eSPI.h> // For the THT-display
 #include <Wire.h>
 #include <SPI.h>
+#include <TFT_eSPI.h> // Main library used
 
+// RPM LED strip
 #include "TLC_LED_Array.h"
+
+// For the TFT SPI 240*320 display
+#include "FC_Display.h"
 
 // Pins
 #define BAT_LEVEL_PIN GPIO_NUM_1
@@ -32,110 +37,26 @@
 #define LED_RESET GPIO_NUM_42
 #define LED_DRIVER_ADDR 0x60 // ?
 
+// General constants
+#define BUTTON_DEBOUNCE_MS 100
+const float battery_voltage_coeff = 4.13 / 3800.0;
+
 // 15-LED array object
-TLC_LED_Array tlc(LED_DRIVER_ADDR, LED_RESET);
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V
+TLC_LED_Array tlc(LED_DRIVER_ADDR, LED_RESET);
 
-// Important: Setup file 'Setup70b_ESP32_S3_ILI9341.h' is changed to correspond to the used pins
-TFT_eSPI tft_display = TFT_eSPI(); 
+// Instance of the display class
+TFT_eSPI tft_disp = TFT_eSPI();
 
-#define SCREEN_WIDTH_FC 320
-#define SCREEN_HEIGHT_FC 240
-
-#define GEAR_FONT 6
-#define GEAR_FONT_SIZE 5
-
-const uint16_t gear_text_size = 15;
-const uint16_t gear_indicator_width = gear_text_size * 6 + 4;
-const uint16_t gear_indicator_pos_y = 30;
-const int16_t gear_text_x_shift = 1;
-const uint16_t gear_text_pos_y = gear_indicator_pos_y + 5;
-
-#define RPM_GAUGE_HEIGHT 20
-float old_rpm_float = 0.0;
-
-void draw_rpm_gauge(float percentage)
-{
-
-  uint16_t gauge_pos = percentage * SCREEN_WIDTH_FC;
-  uint16_t old_gauge_pos = old_rpm_float * SCREEN_WIDTH_FC;
-
-  if (percentage < old_rpm_float)
-  {
-    // "Shorten" the rpm length to the new by drawing over with black
-    tft_display.fillRect(gauge_pos, 0, old_gauge_pos - gauge_pos, RPM_GAUGE_HEIGHT, 0x0000);
-    old_rpm_float = percentage;
-    return;
-  }
-
-  old_rpm_float = percentage;
-
-  std::string end_at = "";
-
-  uint16_t green_end = SCREEN_WIDTH_FC / 3;
-  uint16_t red_end = SCREEN_WIDTH_FC * 2 / 3;
-  uint16_t blue_end = SCREEN_WIDTH_FC;
-
-  uint16_t green_start = 0;
-  uint16_t red_start = green_end + 1;
-  uint16_t blue_start = red_end + 1;
-
-  if (gauge_pos > red_end)
-  {
-    blue_end = gauge_pos;
-  }
-  else if (gauge_pos > green_end)
-  {
-    red_end = gauge_pos;
-    end_at = "red";
-  }
-  else if (gauge_pos <= green_end)
-  {
-    green_end = gauge_pos;
-    end_at = "green";
-  }
-
-  if (old_gauge_pos > red_end)
-  {
-    blue_start = old_gauge_pos;
-  }
-  else if (old_gauge_pos > green_end)
-  {
-    red_start = old_gauge_pos;
-  }
-  else if (old_gauge_pos <= green_end)
-  {
-    green_start = old_gauge_pos;
-    tft_display.fillRect(green_start, 0, green_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x07E1);
-    if (end_at == "green")
-      return;
-  }
-
-  if (old_gauge_pos < red_end)
-    tft_display.fillRect(red_start, 0, red_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0xF800);
-  if (end_at == "red")
-  {
-    return;
-  }
-
-  tft_display.fillRect(blue_start, 0, blue_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x04FF);
-}
-
-void remove_text(std::string text)
-{
-  tft_display.setTextColor(0x0000);
-  tft_display.print(text.c_str());
-
-  // Assume white text
-  tft_display.setTextColor(0xFFFF);
-}
+// Wheel display sending the address
+FC_Display disp(&tft_disp);
 
 void buzz1(uint16_t freq){
-   ledcWriteTone(BZR_1_CHANNEL, freq);
+  ledcWriteTone(BZR_1_CHANNEL, freq);
 }
 
 void buzz2(uint16_t freq){
-   ledcWriteTone(BZR_2_CHANNEL, freq);
+  ledcWriteTone(BZR_2_CHANNEL, freq);
 }
 
 void setup_pins(){
@@ -167,27 +88,24 @@ void beep_beep(){
   buzz2(0);
 }
 
+float read_battery_voltage(){
+  return battery_voltage_coeff * analogRead(BAT_LEVEL_PIN);
+}
+
 void setup(void)
 {
   delay(1000);
-
   setup_pins();
-
   beep_beep();
-
   Serial.begin(115200);
-  //Serial.println("Program started");
-
+  Serial.println("Program started");
   delay(100);
-
-  //Serial.println("tlc.begin()");
+  Serial.println("tlc.begin()");
   tlc.begin();
-  
   delay(100);
 
-  //Serial.println("tft_display.begin()");
-  tft_display.begin();
-
+  Serial.println("disp.begin()");
+  disp.begin();
   delay(100);
 
   // Turn off all the LEDs
@@ -202,21 +120,12 @@ void setup(void)
     tlc.set_LED(i, 0);
   }
   //}
-  
-  // Landscape
-  tft_display.setRotation(1);
 
-  tft_display.fillScreen(TFT_BLACK);
-
-  // Gear indicator
-  tft_display.drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y, gear_indicator_width, gear_text_size * 8, 0xFFFF);
-  tft_display.setTextSize(GEAR_FONT_SIZE);
-  tft_display.setTextFont(4);
-  tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
-  
   tlc.reset_LEDs();
   
   tlc.ramp_init(0);
+
+  disp.init_gear();
 }
 uint16_t throttle_R;
 uint16_t pitch;
@@ -232,60 +141,63 @@ uint32_t last_paddle_R_time = 0;
 
 void loop()
 {
+
+
   new_paddle_R = digitalRead(R_PADDLE_PIN);
   new_paddle_L = digitalRead(L_PADDLE_PIN);
 
-  Serial.println(new_paddle_L);
+  disp.battery_SoC(read_battery_voltage());
 
-  if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > 100)){
+  //Serial.println(new_paddle_L);
+
+  if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > BUTTON_DEBOUNCE_MS)){
     paddle_R = new_paddle_R;
     last_paddle_R_time = millis();
-    //Serial.println("Paddle R: " + String(paddle_R));
+    Serial.println("Paddle R: " + String(paddle_R));
 
     if(paddle_R){
       current_gear++;
-      //Serial.println("Gear: " + String(current_gear));
-    }
-  }
-
-  if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > 100)){
-    paddle_L = new_paddle_L;
-    last_paddle_L_time = millis();
-    Serial.println("Paddle L: " + String(paddle_L));
-
-    if(paddle_L){
-      if(current_gear > 0) current_gear--;
+      disp.change_gear(current_gear);
       Serial.println("Gear: " + String(current_gear));
     }
   }
 
-  tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);
-  tft_display.setTextSize(1);
+  if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > BUTTON_DEBOUNCE_MS)){
+    paddle_L = new_paddle_L;
+    last_paddle_L_time = millis();
+
+    if(paddle_L){
+      if(current_gear > 0){
+        current_gear--;
+        disp.change_gear(current_gear);
+      }
+    }
+  }
+
+  
+
+  // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);
+  // tft_display.setTextSize(1);
   throttle_R = analogRead(R_TRIGGER_PIN);
   btn1_state = digitalRead(BTN1_PIN);
-  tft_display.println(throttle_R);
+  // tft_display.println(throttle_R);
   pitch = 1500*((float)(throttle_R-975) / 2300.0) + 500;
   
-  tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 50);
-  tft_display.println(pitch);
+  // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 50);
+  // tft_display.println(pitch);
   if (btn1_state) (buzz1(pitch));
   else (buzz1(0));
 
   tlc.ramp_set(255.0 * (float)(throttle_R-975)/1300.0);
 
-  // Gear indicator
-  tft_display.drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y, gear_indicator_width, gear_text_size * 8, 0xFFFF);
-  tft_display.setTextSize(GEAR_FONT_SIZE);
-  tft_display.setTextFont(4);
-  tft_display.setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
-  tft_display.print(current_gear);
+
 
   // Serial.println("Analog: " + String(throttle_R));
   // Serial.println("Pitch: " + String(pitch));
   // Serial.println("BTN1: " + String(btn1_state));
   // Serial.println();
 
-  //delay(20);
+  delay(20);
 
 }
 

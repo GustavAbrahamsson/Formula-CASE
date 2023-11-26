@@ -7,15 +7,10 @@ FC_Display::FC_Display(TFT_eSPI* disp_addr){
 }
 
 void FC_Display::begin(){
-  
-  Serial.println("disp.begin() 1");
   FC_Display::tft_display->begin();
   delay(100);
   // Landscape
-  Serial.println("disp.begin() 2");
   FC_Display::tft_display->setRotation(1);
-
-  Serial.println("disp.begin() 3");
   FC_Display::tft_display->fillScreen(TFT_BLACK);
 }
 
@@ -32,14 +27,35 @@ void FC_Display::init_gear(){
 */
 void FC_Display::change_gear(uint8_t gear){
   FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE);
-  FC_Display::tft_display->setTextFont(4);
+  FC_Display::tft_display->setTextFont(GEAR_FONT);
   FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
   remove_text(String(indicated_gear));
+  FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2, gear_indicator_pos_y + 3);
   uint8_t gear_val = constrain(gear, 0, GEAR_INDEX_MAX);
   indicated_gear = gear_val; // Update local "current_gear"
   String out = String(gear_val);
   if(out == 0) out = "N"; // Display "N" as neutral if gear '0' is active
   FC_Display::tft_display->print(out);
+}
+
+/* Display the battery voltage
+  @param voltage
+*/
+void FC_Display::battery_SoC(float voltage){
+  FC_Display::tft_display->setTextSize(BAT_FONT_SIZE);
+  FC_Display::tft_display->setTextFont(BAT_FONT);
+  FC_Display::tft_display->setCursor(bat_pos_x, bat_pos_y);
+  remove_text(String(bat_voltage));
+  FC_Display::tft_display->setCursor(bat_pos_x, bat_pos_y);
+  bat_voltage = voltage;
+  FC_Display::tft_display->print(String(bat_voltage) + " V");
+}
+
+/* Draw the throttle on the right side
+  @param throttle Range [0, 255]
+*/
+void FC_Display::throttle(uint8_t throttle){
+
 }
 
 void FC_Display::remove_text(String text)
