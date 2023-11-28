@@ -36,12 +36,17 @@
 #define BUTTON_TASK_FREQ 100 // Hz
 #define BUTTON_TASK_CORE 0 // 0 or 1
 
+#define TRIGGER_TASK_FREQ 100 // Hz
+#define TRIGGER_TASK_CORE 0
+
 // General constants
 #define PADDLE_DEBOUNCE_STREAK 5
 
 extern const float battery_voltage_coeff;
 
 #define GEAR_INDEX_MAX 8
+
+#define TRIG_LP_ALPHA 0.4 // LP-filter alpha for the throttle and brake
 
 // 15-LED array object
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V

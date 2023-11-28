@@ -15,7 +15,7 @@ void paddle_L_function(bool state){
   }
 }
 
-Input_Peripheral<decltype(&paddle_R_function)> Paddle_R = {
+Peripheral_Digital<decltype(&paddle_R_function)> Paddle_R = {
   &paddle_R_function,  // assigned_function
   0,          // current_val
   0,          // raw_val
@@ -24,11 +24,23 @@ Input_Peripheral<decltype(&paddle_R_function)> Paddle_R = {
   0           // debounce_state
 };
 
-Input_Peripheral<decltype(&paddle_L_function)> Paddle_L = {
+Peripheral_Digital<decltype(&paddle_L_function)> Paddle_L = {
   &paddle_L_function,  // assigned_function
   0,          // current_val
   0,          // raw_val
   0,          // last_val
   1,          // input_streak
   0           // debounce_state
+};
+
+extern Peripheral_Analog throttle_trigger = {
+  0,
+  0,
+  0,
+};
+
+extern Peripheral_Analog brake_trigger = {
+  0,
+  0,
+  0,
 };

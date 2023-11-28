@@ -5,7 +5,7 @@
 
 // Encapsulate the different states of a digital input
 template <typename Func>
-struct Input_Peripheral{
+struct Peripheral_Digital{
   Func assigned_function;
   bool current_val;
   bool raw_val;
@@ -14,11 +14,20 @@ struct Input_Peripheral{
   bool debounce_state;
 };
 
-extern void paddle_R_function(bool state);
+// Encapsulate the different states of a digital input
+struct Peripheral_Analog{
+  uint16_t current_val;
+  uint16_t old_val;
+  uint16_t measurement;
+};
 
+// Gear shifting paddles (digital)
+extern void paddle_R_function(bool state);
 extern void paddle_L_function(bool state);
 
-extern Input_Peripheral<decltype(&paddle_R_function)> Paddle_R;
-extern Input_Peripheral<decltype(&paddle_L_function)> Paddle_L;
+extern Peripheral_Digital<decltype(&paddle_R_function)> Paddle_R;
+extern Peripheral_Digital<decltype(&paddle_L_function)> Paddle_L;
 
-
+// Throttle and braking (analog)
+extern Peripheral_Analog throttle_trigger;
+extern Peripheral_Analog brake_trigger;

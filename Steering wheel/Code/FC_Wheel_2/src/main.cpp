@@ -3,6 +3,8 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <TFT_eSPI.h> // Main library used
+#include <numeric>
+#include <vector>
 
 // RPM LED strip
 #include "TLC_LED_Array.h"
@@ -53,6 +55,10 @@ void beep_beep(){
   buzz2(0);
 }
 
+int16_t low_pass_filter(int16_t new_val, int16_t old_val, float alpha){
+  return alpha * new_val + (1 - alpha) * old_val;
+}
+
 float read_battery_voltage(){
   return battery_voltage_coeff * analogRead(BAT_LEVEL_PIN);
 }
@@ -61,7 +67,7 @@ float read_battery_voltage(){
 @param input Address to an 'Input_Peripheral'
 */
 template <typename Func>
-void debounce_input(Input_Peripheral<Func>* input){
+void debounce_input(Peripheral_Digital<Func>* input){
   // New value detected, init debouncing
     if((input->raw_val != input->current_val) && !input->debounce_state){
       Serial.println("Debounce started, old: " + String(input->current_val) + 
@@ -109,7 +115,6 @@ void button_task(void *pvParameter){
   bool debounce_paddle_L = false;
   uint16_t num_same_paddle_L = 1;
 
-
   while(1){
     // Wait for the next cycle.
     xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
@@ -121,15 +126,55 @@ void button_task(void *pvParameter){
 
     disp.battery_SoC(read_battery_voltage());
 
+    //disp.throttle(throttle_trigger.current_val);
+
     debounce_input(&Paddle_R);
     debounce_input(&Paddle_L);
+  }
+}
 
+// The task that handles reading analog inputs
+void trigger_task(void *pvParameter){
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / TRIGGER_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  xLastWakeTime = xTaskGetTickCount();
+  
+  uint16_t temp_val;
+
+  while(1){
+    xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
+
+    // Update old values
+    throttle_trigger.old_val = throttle_trigger.current_val;
+    brake_trigger.old_val = throttle_trigger.current_val;
+
+    // Update with measurements
+    throttle_trigger.measurement = analogRead(R_TRIGGER_PIN);
+    brake_trigger.measurement = analogRead(L_TRIGGER_PIN);
+
+    // Filter the input
+    throttle_trigger.current_val = low_pass_filter(throttle_trigger.measurement, throttle_trigger.old_val, TRIG_LP_ALPHA);
+    brake_trigger.current_val = low_pass_filter(brake_trigger.measurement, brake_trigger.old_val, TRIG_LP_ALPHA);
+
+    // if(brake_trigger.measurement > throttle_trigger.current_val){
+    //   temp_val = brake_trigger.measurement;
+    // }
+    // else{
+    //   temp_val = throttle_trigger.current_val;
+    // }
+
+    // tlc.ramp_set(255.0 * (float)(temp_val-975)/1400.0);
     
   }
-} 
+}
+
 
 void init_tasks(){
   xTaskCreatePinnedToCore(button_task, "button_task", 2048, NULL, 1, NULL, BUTTON_TASK_CORE);
+  
+  xTaskCreatePinnedToCore(trigger_task, "trigger_task", 2048, NULL, 1, NULL, TRIGGER_TASK_CORE);
+
 }
 
 void setup(void)
@@ -156,15 +201,13 @@ void setup(void)
     // "Slide"
   for(int i = 0; i < TLC_NUM_LEDS; i++){
     tlc.set_LED(i, 100);
-    delay(15);
+    delay(10);
     tlc.set_LED(i, 0);
   }
   //}
 
   tlc.reset_LEDs();
-  
   tlc.ramp_init(0);
-
   disp.init_gear();
 
   init_tasks();
@@ -173,44 +216,12 @@ void setup(void)
 
 void loop()
 {
-
   while(1){
-    vTaskDelay(10000 / portTICK_RATE_MS);
+    Serial.println("Throttle: "+String(throttle_trigger.current_val));
+    Serial.println("Brake: "+String(brake_trigger.measurement));
+    Serial.println();
+    vTaskDelay(20 / portTICK_RATE_MS);
   }
-  
-  new_paddle_R = digitalRead(R_PADDLE_PIN);
-  new_paddle_L = digitalRead(L_PADDLE_PIN);
-
-  disp.battery_SoC(read_battery_voltage());
-
-  Serial.println(analogRead(BAT_LEVEL_PIN));
-
-  //Serial.println(new_paddle_L);
-
-  // if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > BUTTON_DEBOUNCE_MS)){
-  //   paddle_R = new_paddle_R;
-  //   last_paddle_R_time = millis();
-  //   Serial.println("Paddle R: " + String(paddle_R));
-
-  //   if(paddle_R){
-  //     current_gear++;
-  //     disp.change_gear(current_gear);
-  //     Serial.println("Gear: " + String(current_gear));
-  //   }
-  // }
-
-  // if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > BUTTON_DEBOUNCE_MS)){
-  //   paddle_L = new_paddle_L;
-  //   last_paddle_L_time = millis();
-
-  //   if(paddle_L){
-  //     if(current_gear > 0){
-  //       current_gear--;
-  //       disp.change_gear(current_gear);
-  //     }
-  //   }
-  // }
-
   
 
   // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);
@@ -225,7 +236,6 @@ void loop()
   if (btn1_state) (buzz1(pitch));
   else (buzz1(0));
 
-  tlc.ramp_set(255.0 * (float)(throttle_R-975)/1300.0);
 
 
 
@@ -237,6 +247,66 @@ void loop()
   delay(20);
 
 }
+
+// double mu;
+//   double sq_sum;
+//   double sigma;
+//   double smallest;
+//   double highest;
+//   int size = 5000;
+//   std::vector<double> value_vector(size);
+//   while(1){
+//     smallest = 5000;
+//     highest = 0;
+//     for(int i = 0; i < size; i++){
+//       value_vector.at(i) = throttle_trigger.measurement;
+//       if (value_vector.at(i) < smallest){
+//         smallest = value_vector.at(i);
+//       }
+//       else if(value_vector.at(i) > highest){
+//         highest = value_vector.at(i);
+//       }
+//       vTaskDelay(5 / portTICK_RATE_MS);
+//     }
+    
+//     mu = (double)std::accumulate(value_vector.begin(), value_vector.end(), 0.0) / (double)(size);
+    
+//     sq_sum = std::inner_product(value_vector.begin(), value_vector.end(), value_vector.begin(), 0.0);
+//     sigma = std::sqrt(sq_sum / value_vector.size() - mu * mu);
+
+//     Serial.println("Raw: "+String(throttle_trigger.measurement)+" Mean: "+String(mu)+" 3-sigma: "+String(3*sigma));
+//     Serial.println("Highest: "+String(highest)+" Smallest: "+String(smallest)+"\n");
+//     Serial.println("Highest: "+String(mu+3*sigma)+" Smallest: "+String(mu-3*sigma)+" (3-sigma +- mu)\n");
+//     vTaskDelay(1000 / portTICK_RATE_MS);
+//   }
+
+//Serial.println(new_paddle_L);
+
+// if((new_paddle_R != paddle_R) && (millis() - last_paddle_R_time > BUTTON_DEBOUNCE_MS)){
+//   paddle_R = new_paddle_R;
+//   last_paddle_R_time = millis();
+//   Serial.println("Paddle R: " + String(paddle_R));
+
+//   if(paddle_R){
+//     current_gear++;
+//     disp.change_gear(current_gear);
+//     Serial.println("Gear: " + String(current_gear));
+//   }
+// }
+
+// if((new_paddle_L != paddle_L) && (millis() - last_paddle_L_time > BUTTON_DEBOUNCE_MS)){
+//   paddle_L = new_paddle_L;
+//   last_paddle_L_time = millis();
+
+//   if(paddle_L){
+//     if(current_gear > 0){
+//       current_gear--;
+//       disp.change_gear(current_gear);
+//     }
+//   }
+// }
+
+
 
 // for (int i = 1; i <= 8; i++)
   // {
