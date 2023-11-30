@@ -33,13 +33,13 @@ Peripheral_Digital<decltype(&paddle_L_function)> Paddle_L = {
   0           // debounce_state
 };
 
-extern Peripheral_Analog throttle_trigger = {
+Peripheral_Analog throttle_trigger = {
   0,
   0,
   0,
 };
 
-extern Peripheral_Analog brake_trigger = {
+Peripheral_Analog brake_trigger = {
   0,
   0,
   0,

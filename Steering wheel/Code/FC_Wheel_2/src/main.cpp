@@ -3,6 +3,9 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <TFT_eSPI.h> // Main library used
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+
 #include <numeric>
 #include <vector>
 
@@ -17,6 +20,9 @@
 
 // Functions for all the peripherals
 #include "Peripheral_Functions.h"
+
+// MPU6050 IMU
+#include "MPU6050.h"
 
 void buzz1(uint16_t freq){
   ledcWriteTone(BZR_1_CHANNEL, freq);
@@ -169,27 +175,95 @@ void trigger_task(void *pvParameter){
   }
 }
 
+// The task that reads and updates the IMU values
+void imu_task(void *pvParameter){
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / IMU_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  xLastWakeTime = xTaskGetTickCount();
+  
+  uint16_t temp_val;
+
+  float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
+  
+  float old_acc_x, old_acc_y, old_acc_z, old_gyr_x, old_gyr_y, old_gyr_z;
+
+  const float comp_alpha = 0.98; // Complementary filter constant
+  const float alpha = 1;
+  float gyro_angle = 0.0;
+  float accel_angle = 0.0;
+
+  while(1){
+    xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
+    
+    // Read from the sensor
+    imu.read();
+
+    acc_x = low_pass_filter(imu.raw_acc().x, old_acc_x, alpha);
+    acc_y = low_pass_filter(imu.raw_acc().y, old_acc_y, alpha);
+    acc_z = low_pass_filter(imu.raw_acc().z, old_acc_z, alpha);
+    gyr_x = low_pass_filter(imu.raw_gyr().x, old_gyr_x, alpha);
+    gyr_y = low_pass_filter(imu.raw_gyr().y, old_gyr_y, alpha);
+    gyr_z = low_pass_filter(imu.raw_gyr().z, old_gyr_z, alpha);
+
+    Serial.print(acc_x);Serial.print("\t");
+    Serial.print(acc_y);Serial.print("\t");
+    Serial.print(acc_z);Serial.print("\t");
+    Serial.print(gyr_x);Serial.print("\t");
+    Serial.print(gyr_y);Serial.print("\t");
+    Serial.print(gyr_z);Serial.print("\t");
+
+    // Integrate gyro data
+    gyro_angle += acc_z * (180.0 / PI) * (1.0 / IMU_TASK_FREQ); // Replace 0.01 with your loop time (in seconds)
+
+    // Read accelerometer data
+    float accelAngleRad = atan2(acc_y, acc_x);
+    accel_angle = accelAngleRad * (180.0 / PI);
+
+    // Fuse gyro and accel data using complementary filter
+    float fusedAngle = comp_alpha * gyro_angle + (1 - comp_alpha) * accel_angle;
+
+    Serial.print(accel_angle);Serial.print("\t");
+    Serial.print(gyro_angle);Serial.print("\t");
+    Serial.println(fusedAngle);Serial.print("\t");
+
+
+    old_acc_x = acc_x;
+    old_acc_y = acc_y;
+    old_acc_z = acc_z;
+    
+    old_gyr_x = gyr_x;
+    old_gyr_y = gyr_y;
+    old_gyr_z = gyr_z;
+  }
+}
+
 
 void init_tasks(){
   xTaskCreatePinnedToCore(button_task, "button_task", 2048, NULL, 1, NULL, BUTTON_TASK_CORE);
   
   xTaskCreatePinnedToCore(trigger_task, "trigger_task", 2048, NULL, 1, NULL, TRIGGER_TASK_CORE);
-
+  
+  xTaskCreatePinnedToCore(imu_task, "imu_task", 2048, NULL, 1, NULL, IMU_TASK_CORE);
 }
 
 void setup(void)
 {
-  delay(1000);
+  delay(500);
+  
+  // This has to be the first i2c device, it kills i2c if it is not first
+  imu.begin(IMU_ACC_RANGE, IMU_GYR_RANGE, IMU_BANDW, IMU_HP_FILTER);
+
   setup_pins();
   beep_beep();
   Serial.begin(115200);
-  Serial.println("Program started");
+  //Serial.println("Program started");
   delay(100);
-  Serial.println("tlc.begin()");
+  //Serial.println("tlc.begin()");
   tlc.begin();
   delay(100);
 
-  Serial.println("disp.begin()");
+  //Serial.println("disp.begin()");
   disp.begin();
   delay(100);
 
@@ -201,7 +275,7 @@ void setup(void)
     // "Slide"
   for(int i = 0; i < TLC_NUM_LEDS; i++){
     tlc.set_LED(i, 100);
-    delay(10);
+    delay(15);
     tlc.set_LED(i, 0);
   }
   //}
@@ -217,12 +291,12 @@ void setup(void)
 void loop()
 {
   while(1){
-    Serial.println("Throttle: "+String(throttle_trigger.current_val));
-    Serial.println("Brake: "+String(brake_trigger.measurement));
-    Serial.println();
-    vTaskDelay(20 / portTICK_RATE_MS);
+    //Serial.println("acc: "+String(imu.get_acc().x)+", "+String(imu.get_acc().y)+", "+String(imu.get_acc().z));
+    //Serial.println("gyr: "+String(imu.get_gyr().x)+", "+String(imu.get_gyr().y)+", "+String(imu.get_gyr().z));
+    //Serial.println();
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
   }
-  
 
   // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);
   // tft_display.setTextSize(1);
@@ -498,7 +572,7 @@ void loop()
 
 
 
-// ------------------------------------------
+// // ------------------------------------------
 // /*
 // Scanning...
 // I2C device found at address 0x60  !

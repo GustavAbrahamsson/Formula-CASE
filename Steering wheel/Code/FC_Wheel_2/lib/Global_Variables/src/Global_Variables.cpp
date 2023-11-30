@@ -3,6 +3,7 @@
 #include "TFT_eSPI.h"
 #include "TLC_LED_Array.h"
 #include "FC_Display.h"
+#include "MPU6050.h"
 
 
 // 15-LED array object
@@ -14,6 +15,9 @@ TFT_eSPI tft_disp = TFT_eSPI();
 
 // Wheel display sending the address
 FC_Display disp(&tft_disp);
+
+// IMU
+IMU imu = IMU(IMU_ADDR);
 
 const float battery_voltage_coeff = 4.05 / 3800.0;
 
