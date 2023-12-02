@@ -16,7 +16,15 @@
 
 #define RPM_GAUGE_HEIGHT 20
 
-
+struct status_bar{
+  uint8_t value;
+  uint8_t old_value;
+  uint16_t x0;
+  uint16_t y0;
+  uint8_t height;
+  uint8_t width;
+  int color;
+};
 
 class FC_Display{
     private:
@@ -34,17 +42,46 @@ class FC_Display{
         static const uint16_t bat_pos_x = SCREEN_WIDTH_FC - 75;
         static const uint16_t bat_pos_y = SCREEN_HEIGHT_FC - 25;
 
+        // Throttle bar dimensions
+        static const uint16_t bar_distance = 2;
+        static const uint16_t bar_spacing = 2;
+
+        static const uint16_t throttle_bar_width = 20;
+        static const uint16_t throttle_bar_height = 120;
+        static const uint16_t throttle_bar_x0 = SCREEN_WIDTH_FC - throttle_bar_width - bar_distance;
+        static const uint16_t throttle_bar_y0 = bar_distance;
+        static const uint16_t throttle_color = TFT_GREEN;
+
+        // Brake bar dimensions (mirrored)
+        static const uint16_t brake_bar_width = throttle_bar_width;
+        static const uint16_t brake_bar_height = throttle_bar_height;
+        static const uint16_t brake_bar_x0 = bar_distance;
+        static const uint16_t brake_bar_y0 = bar_distance;
+        static const uint16_t brake_color = TFT_RED;
+
+        status_bar throttle_bar = {0, 0, throttle_bar_x0, throttle_bar_y0, throttle_bar_height, 
+                                          throttle_bar_width, throttle_color};
+
+        status_bar brake_bar =    {0, 0, brake_bar_x0, brake_bar_y0, brake_bar_height,
+                                          brake_bar_width, brake_color};
+
         // Important: Setup file 'Setup70b_ESP32_S3_ILI9341.h' is changed to correspond to the used pins
         // The core instance of the main display library
         TFT_eSPI* tft_display;
 
+        void init_bar(status_bar* bar, uint8_t value);
+        void update_bar(status_bar* bar, uint8_t value);
+
         void remove_text(String text);
+
+        void init_main();
+
+        void init_gear();
 
     public:
         FC_Display(TFT_eSPI* disp_addr);
         void begin();
-
-        void init_gear();
+        
         void change_gear(uint8_t gear);
 
         void throttle(uint8_t throttle);
@@ -52,10 +89,9 @@ class FC_Display{
 
         void battery_SoC(float voltage);
 
+        void draw_angle(float angle);
+
         void draw_rpm_gauge(float percentage);
         
-
-
-
 };
 

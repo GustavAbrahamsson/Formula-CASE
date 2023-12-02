@@ -18,6 +18,8 @@ struct Peripheral_Digital{
 struct Peripheral_Analog{
   uint16_t current_val;
   uint16_t old_val;
+  uint16_t min_val;
+  uint16_t max_val;
   uint16_t measurement;
 };
 

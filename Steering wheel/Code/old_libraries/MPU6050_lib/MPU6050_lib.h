@@ -13,12 +13,12 @@ struct xyz_vector{
 
 class IMU{
   private:
-  Adafruit_MPU6050 imu;
-  sensors_event_t a, g, temp;
   int address;
+  Adafruit_MPU6050 imu;
 
   public:
   IMU(int addr);
+  sensors_event_t a, g, temp;
   int begin(mpu6050_accel_range_t acc_range, mpu6050_gyro_range_t gyr_range, mpu6050_bandwidth_t bandw, mpu6050_highpass_t hp_filter);
   void read();
   xyz_vector raw_acc();

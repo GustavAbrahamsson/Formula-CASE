@@ -3,7 +3,6 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <TFT_eSPI.h> // Main library used
-#include <Adafruit_Sensor.h>
 #include <Wire.h>
 
 #include <numeric>
@@ -22,7 +21,8 @@
 #include "Peripheral_Functions.h"
 
 // MPU6050 IMU
-#include "MPU6050.h"
+#include <MPU6050_tockn.h>
+
 
 void buzz1(uint16_t freq){
   ledcWriteTone(BZR_1_CHANNEL, freq);
@@ -76,8 +76,8 @@ template <typename Func>
 void debounce_input(Peripheral_Digital<Func>* input){
   // New value detected, init debouncing
     if((input->raw_val != input->current_val) && !input->debounce_state){
-      Serial.println("Debounce started, old: " + String(input->current_val) + 
-              " new: " + String(input->raw_val));
+      //Serial.println("Debounce started, old: " + String(input->current_val) + 
+      //        " new: " + String(input->raw_val));
       input->current_val = input->raw_val; // Immediately update the value in use
 
       // Call the assigned function to that specific input and send in the current state
@@ -88,8 +88,8 @@ void debounce_input(Peripheral_Digital<Func>* input){
     }else if(input->debounce_state){
       // If enough samples are identical in a row, assume bouncing has settled
       if (input->input_streak >= PADDLE_DEBOUNCE_STREAK){
-        Serial.println("Debounce ended, new: "+String(input->raw_val)+
-              ", num_same = "+String(input->input_streak)+"\n\n");
+        //Serial.println("Debounce ended, new: "+String(input->raw_val)+
+        //      ", num_same = "+String(input->input_streak)+"\n\n");
         input->debounce_state = false;
         input->input_streak = 0;
       }
@@ -100,7 +100,7 @@ void debounce_input(Peripheral_Digital<Func>* input){
       else {
         input->input_streak = 1;
       }
-      Serial.println("Num same: " + String(input->input_streak));
+      //Serial.println("Num same: " + String(input->input_streak));
     }
 
     input->last_val = input->raw_val;
@@ -132,8 +132,6 @@ void button_task(void *pvParameter){
 
     disp.battery_SoC(read_battery_voltage());
 
-    //disp.throttle(throttle_trigger.current_val);
-
     debounce_input(&Paddle_R);
     debounce_input(&Paddle_L);
   }
@@ -146,22 +144,47 @@ void trigger_task(void *pvParameter){
   BaseType_t xWasDelayed;
   xLastWakeTime = xTaskGetTickCount();
   
-  uint16_t temp_val;
+  float value_interval = 1000;
+
+
 
   while(1){
     xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
 
     // Update old values
     throttle_trigger.old_val = throttle_trigger.current_val;
-    brake_trigger.old_val = throttle_trigger.current_val;
+    brake_trigger.old_val = brake_trigger.current_val;
+
 
     // Update with measurements
     throttle_trigger.measurement = analogRead(R_TRIGGER_PIN);
     brake_trigger.measurement = analogRead(L_TRIGGER_PIN);
 
+    // Update min/max if exceeded
+    if (throttle_trigger.measurement < throttle_trigger.min_val){
+      throttle_trigger.min_val = throttle_trigger.measurement;
+      value_interval = throttle_trigger.max_val - throttle_trigger.min_val;
+    }
+    else if (throttle_trigger.measurement > throttle_trigger.max_val){
+      throttle_trigger.max_val = throttle_trigger.measurement;
+      value_interval = throttle_trigger.max_val - throttle_trigger.min_val;
+    }
+    
     // Filter the input
     throttle_trigger.current_val = low_pass_filter(throttle_trigger.measurement, throttle_trigger.old_val, TRIG_LP_ALPHA);
     brake_trigger.current_val = low_pass_filter(brake_trigger.measurement, brake_trigger.old_val, TRIG_LP_ALPHA);
+
+    Serial.print(throttle_trigger.measurement); Serial.print("\t");
+    Serial.print(brake_trigger.measurement); Serial.print("\t");
+
+    disp.throttle(constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255));
+    disp.brake(constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255));
+
+    Serial.print(throttle_trigger.current_val); Serial.print("\t");
+    Serial.print(brake_trigger.current_val); Serial.print("\t");
+    
+    Serial.print(constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.print("\t");
+    Serial.print(constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.println("\t");
 
     // if(brake_trigger.measurement > throttle_trigger.current_val){
     //   temp_val = brake_trigger.measurement;
@@ -184,57 +207,15 @@ void imu_task(void *pvParameter){
   
   uint16_t temp_val;
 
-  float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
-  
-  float old_acc_x, old_acc_y, old_acc_z, old_gyr_x, old_gyr_y, old_gyr_z;
-
-  const float comp_alpha = 0.98; // Complementary filter constant
-  const float alpha = 1;
-  float gyro_angle = 0.0;
-  float accel_angle = 0.0;
-
   while(1){
     xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
     
     // Read from the sensor
-    imu.read();
+    imu.update();
 
-    acc_x = low_pass_filter(imu.raw_acc().x, old_acc_x, alpha);
-    acc_y = low_pass_filter(imu.raw_acc().y, old_acc_y, alpha);
-    acc_z = low_pass_filter(imu.raw_acc().z, old_acc_z, alpha);
-    gyr_x = low_pass_filter(imu.raw_gyr().x, old_gyr_x, alpha);
-    gyr_y = low_pass_filter(imu.raw_gyr().y, old_gyr_y, alpha);
-    gyr_z = low_pass_filter(imu.raw_gyr().z, old_gyr_z, alpha);
+    wheel_angle = imu.getAngleZ();
 
-    Serial.print(acc_x);Serial.print("\t");
-    Serial.print(acc_y);Serial.print("\t");
-    Serial.print(acc_z);Serial.print("\t");
-    Serial.print(gyr_x);Serial.print("\t");
-    Serial.print(gyr_y);Serial.print("\t");
-    Serial.print(gyr_z);Serial.print("\t");
-
-    // Integrate gyro data
-    gyro_angle += acc_z * (180.0 / PI) * (1.0 / IMU_TASK_FREQ); // Replace 0.01 with your loop time (in seconds)
-
-    // Read accelerometer data
-    float accelAngleRad = atan2(acc_y, acc_x);
-    accel_angle = accelAngleRad * (180.0 / PI);
-
-    // Fuse gyro and accel data using complementary filter
-    float fusedAngle = comp_alpha * gyro_angle + (1 - comp_alpha) * accel_angle;
-
-    Serial.print(accel_angle);Serial.print("\t");
-    Serial.print(gyro_angle);Serial.print("\t");
-    Serial.println(fusedAngle);Serial.print("\t");
-
-
-    old_acc_x = acc_x;
-    old_acc_y = acc_y;
-    old_acc_z = acc_z;
-    
-    old_gyr_x = gyr_x;
-    old_gyr_y = gyr_y;
-    old_gyr_z = gyr_z;
+    //Serial.print(wheel_angle); Serial.println("\t");
   }
 }
 
@@ -249,26 +230,24 @@ void init_tasks(){
 
 void setup(void)
 {
-  delay(500);
-  
-  // This has to be the first i2c device, it kills i2c if it is not first
-  imu.begin(IMU_ACC_RANGE, IMU_GYR_RANGE, IMU_BANDW, IMU_HP_FILTER);
-
   setup_pins();
   beep_beep();
   Serial.begin(115200);
-  //Serial.println("Program started");
   delay(100);
-  //Serial.println("tlc.begin()");
+  
+  // Init LED array
   tlc.begin();
   delay(100);
 
-  //Serial.println("disp.begin()");
+  // Init IMU
+  imu.begin();
+  imu.setGyroOffsets(gyr_x_offset, gyr_y_offset, gyr_z_offset); // From calibration!
+
+  // Init TFT display
   disp.begin();
   delay(100);
-
+  
   // Turn off all the LEDs
-  //Serial.println("tlc.reset_LEDs()");
   tlc.reset_LEDs();
 
   //for(int j = 0; j < 2; j++){
@@ -282,7 +261,6 @@ void setup(void)
 
   tlc.reset_LEDs();
   tlc.ramp_init(0);
-  disp.init_gear();
 
   init_tasks();
 }

@@ -2,7 +2,7 @@
 #include "TFT_eSPI.h"
 #include "TLC_LED_Array.h"
 #include "FC_Display.h"
-#include "MPU6050.h"
+#include <MPU6050_tockn.h>
 
 #pragma once
 
@@ -72,7 +72,13 @@ extern TFT_eSPI tft_disp;
 extern FC_Display disp;
 
 // IMU
-extern IMU imu;
+extern MPU6050 imu;
+extern float wheel_angle; // deg
+
+// From calibration!
+extern const float gyr_x_offset;
+extern const float gyr_y_offset;
+extern const float gyr_z_offset;
 
 extern uint16_t throttle_R;
 extern uint16_t pitch;

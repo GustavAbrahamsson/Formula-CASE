@@ -1,10 +1,10 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include "Global_Variables.h"
 #include "TFT_eSPI.h"
 #include "TLC_LED_Array.h"
 #include "FC_Display.h"
-#include "MPU6050.h"
-
+#include <MPU6050_tockn.h>
 
 // 15-LED array object
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V
@@ -17,7 +17,13 @@ TFT_eSPI tft_disp = TFT_eSPI();
 FC_Display disp(&tft_disp);
 
 // IMU
-IMU imu = IMU(IMU_ADDR);
+MPU6050 imu(Wire);
+float wheel_angle = 0.0; // deg
+
+// From calibrations!
+const float gyr_x_offset = -0.95;
+const float gyr_y_offset = 1.33;
+const float gyr_z_offset = 0.07;
 
 const float battery_voltage_coeff = 4.05 / 3800.0;
 

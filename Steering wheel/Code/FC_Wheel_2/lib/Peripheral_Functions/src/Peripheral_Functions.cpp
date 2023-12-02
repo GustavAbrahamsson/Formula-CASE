@@ -36,11 +36,15 @@ Peripheral_Digital<decltype(&paddle_L_function)> Paddle_L = {
 Peripheral_Analog throttle_trigger = {
   0,
   0,
+  1500,       // min_val <--- TODO: Needs fixing
+  2000,       // max_val <--- TODO: Needs fixing
   0,
 };
 
 Peripheral_Analog brake_trigger = {
   0,
   0,
+  1500,       // min_val <--- TODO: Needs fixing
+  2000,       // max_val <--- TODO: Needs fixing
   0,
 };

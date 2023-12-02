@@ -3,21 +3,72 @@
 
 FC_Display::FC_Display(TFT_eSPI* disp_addr){
   Serial.println("FC_Display()");
-  FC_Display::tft_display = disp_addr;
+  tft_display = disp_addr;
 }
 
 void FC_Display::begin(){
-  FC_Display::tft_display->begin();
+  tft_display->begin();
   delay(100);
+
+  // Init main screen
+  init_main();
+}
+
+// Boots up the main screen
+void FC_Display::init_main(){
   // Landscape
-  FC_Display::tft_display->setRotation(1);
-  FC_Display::tft_display->fillScreen(TFT_BLACK);
+  tft_display->setRotation(1);
+  tft_display->fillScreen(TFT_BLACK);
+
+  init_gear();
+  init_bar(&throttle_bar, 0);
+  init_bar(&brake_bar, 0);
+}
+
+// Init a certain status bar
+void FC_Display::init_bar(status_bar* bar, uint8_t value){
+  // Reset the area
+  tft_display->fillRect(bar->x0, bar->y0, bar->width, bar->height, TFT_BLACK);
+
+  // Draw a white rectangle around the bar
+  tft_display->drawRect(bar->x0, bar->y0, bar->width, bar->height, TFT_WHITE);
+  update_bar(bar, value);
+}
+
+// Update a status bar
+void FC_Display::update_bar(status_bar* bar, uint8_t value){
+  value = constrain(value, 0, 255);
+  bar->value = value;
+  uint16_t bar_height_total = (bar->height-2*bar_spacing);
+  uint16_t old_tip_y = bar_height_total * (float)(255.0 - bar->old_value)/255.0;
+  uint16_t new_tip_y = bar_height_total * (float)(255.0 - bar->value)/255.0;
+
+  uint16_t y_start;
+  uint16_t diff_height = abs(new_tip_y - old_tip_y);
+  int color_in_use;
+
+  if (bar->value > bar->old_value){ // Increase (use specified color)
+    y_start = new_tip_y;
+    color_in_use = bar->color;
+  }
+  else if (bar->value < bar->old_value){ // Decrease (remove with black)
+    y_start = old_tip_y;;
+    color_in_use = TFT_BLACK;
+  }
+  else{ // No change
+    return;
+  }
+
+  tft_display->fillRect(bar->x0 + bar_spacing, bar->y0 + bar_spacing + y_start, 
+              bar->width - 2 * bar_spacing, diff_height, color_in_use);
+
+  bar->old_value = bar->value;
 }
 
 // Initialize the gear indicator
 void FC_Display::init_gear(){
   // Initialize gear indicator
-  FC_Display::tft_display->drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y,
+  tft_display->drawRect((SCREEN_WIDTH_FC - gear_indicator_width) / 2, gear_indicator_pos_y,
                                             gear_indicator_width, gear_text_size * 8, 0xFFFF);
   change_gear(indicated_gear);
 }
@@ -28,16 +79,16 @@ void FC_Display::init_gear(){
 */
 void FC_Display::change_gear(uint8_t gear){
   String out;
-  FC_Display::tft_display->setTextFont(GEAR_FONT);
+  tft_display->setTextFont(GEAR_FONT);
   if(indicated_gear == 0) {
     out = "N";
-    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
-    FC_Display::tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+    tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
+    tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
                                                                   gear_indicator_pos_y + 15);
   } else {
     out = String(indicated_gear);
-    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
-  FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+    tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
+  tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
                                                                   gear_indicator_pos_y + 3);
   }
   remove_text(out);
@@ -45,46 +96,62 @@ void FC_Display::change_gear(uint8_t gear){
   indicated_gear = gear_val; // Update local "current_gear"
   if(indicated_gear == 0) {
     out = "N";
-    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
-    FC_Display::tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+    tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
+    tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
                                                                   gear_indicator_pos_y + 15);
   } else {
     out = String(gear_val);
-    FC_Display::tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
-    FC_Display::tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+    tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
+    tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
                                                                   gear_indicator_pos_y + 3);
   }
-  FC_Display::tft_display->print(out);
+  tft_display->print(out);
 }
 
 /* Display the battery voltage
-  @param voltage
+  @param voltage [V]
 */
 void FC_Display::battery_SoC(float voltage){
-  FC_Display::tft_display->setTextSize(BAT_FONT_SIZE);
-  FC_Display::tft_display->setTextFont(BAT_FONT);
-  FC_Display::tft_display->setCursor(bat_pos_x, bat_pos_y);
+  tft_display->setTextSize(BAT_FONT_SIZE);
+  tft_display->setTextFont(BAT_FONT);
+  tft_display->setCursor(bat_pos_x, bat_pos_y);
   remove_text(String(bat_voltage));
-  FC_Display::tft_display->setCursor(bat_pos_x, bat_pos_y);
+  tft_display->setCursor(bat_pos_x, bat_pos_y);
   bat_voltage = voltage;
-  FC_Display::tft_display->print(String(bat_voltage) + " V");
+  tft_display->print(String(bat_voltage) + " V");
 }
 
 /* Draw the throttle on the right side
-  @param throttle Range [0, 255]
+  @param value Range [0, 255]
 */
-void FC_Display::throttle(uint8_t throttle){
-
+void FC_Display::throttle(uint8_t value){
+  update_bar(&throttle_bar, value);
 }
+
+/* Draw the brake on the left side
+  @param value Range [0, 255]
+*/
+void FC_Display::brake(uint8_t value){
+  update_bar(&brake_bar, value);
+}
+
 
 void FC_Display::remove_text(String text)
 {
-  FC_Display::tft_display->setTextColor(0x0000);
-  FC_Display::tft_display->print(text.c_str());
+  tft_display->setTextColor(0x0000);
+  tft_display->print(text.c_str());
 
   // Assume white text
-  FC_Display::tft_display->setTextColor(0xFFFF);
+  tft_display->setTextColor(0xFFFF);
 }
+
+/* Draw the angle (z-axis)
+  @param angle The angle [deg]
+*/
+void FC_Display::draw_angle(float angle){
+
+}
+
 
 void FC_Display::draw_rpm_gauge(float percentage)
 {
@@ -94,7 +161,7 @@ void FC_Display::draw_rpm_gauge(float percentage)
   if (percentage < old_rpm_float)
   {
     // "Shorten" the rpm length to the new by drawing over with black
-    FC_Display::tft_display->fillRect(gauge_pos, 0, old_gauge_pos - gauge_pos, RPM_GAUGE_HEIGHT, 0x0000);
+    tft_display->fillRect(gauge_pos, 0, old_gauge_pos - gauge_pos, RPM_GAUGE_HEIGHT, 0x0000);
     old_rpm_float = percentage;
     return;
   }
@@ -137,17 +204,17 @@ void FC_Display::draw_rpm_gauge(float percentage)
   else if (old_gauge_pos <= green_end)
   {
     green_start = old_gauge_pos;
-    FC_Display::tft_display->fillRect(green_start, 0, green_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x07E1);
+    tft_display->fillRect(green_start, 0, green_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x07E1);
     if (end_at == "green")
       return;
   }
 
   if (old_gauge_pos < red_end)
-    FC_Display::tft_display->fillRect(red_start, 0, red_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0xF800);
+    tft_display->fillRect(red_start, 0, red_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0xF800);
   if (end_at == "red")
   {
     return;
   }
 
-  FC_Display::tft_display->fillRect(blue_start, 0, blue_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x04FF);
+  tft_display->fillRect(blue_start, 0, blue_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x04FF);
 }

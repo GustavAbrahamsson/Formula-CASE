@@ -184,7 +184,7 @@ int TLC_LED_Array::ramp_set(uint8_t level){
     return -1;
   }
 
-  
+  return 0;
 }
 
 

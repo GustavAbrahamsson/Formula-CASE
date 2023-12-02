@@ -1,4 +1,4 @@
-#include "MPU6050.h"
+#include "MPU6050_lib.h"
 
 IMU::IMU(int addr){
   address = addr;
