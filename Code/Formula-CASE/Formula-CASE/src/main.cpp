@@ -1,24 +1,6 @@
 #include <Arduino.h>
-
-// Pinmappings
-// Motor control pins
-// #define M1_FWR_PIN 35
-// #define M1_REV_PIN 36
-// #define M2_FWR_PIN 37
-// #define M2_REV_PIN 38
-// #define M3_FWR_PIN 39
-// #define M3_REV_PIN 40
-// #define M4_FWR_PIN 41
-// #define M4_REV_PIN 42
-
-#define M1_FWR_PIN 37
-#define M1_REV_PIN 38
-#define M2_FWR_PIN 35
-#define M2_REV_PIN 36
-#define M3_FWR_PIN 39
-#define M3_REV_PIN 40
-#define M4_FWR_PIN 41
-#define M4_REV_PIN 42
+#include "Motor_controller.h"
+#include <ESP32Servo.h>
 
 // ADC pins
 #define HALL_EFF_1_PIN 5
@@ -34,59 +16,40 @@
 #define M1_SENSE_PIN 1
 
 // Servo pins
-#define SERVO1_PIN 15
+#define SERVO_PIN 15
+
+#define SERVO_DEFLECTION 50 // deg
+
+
+Motor_controller motor_controller = Motor_controller();
+
+Servo servo;
 
 void setup() {
-  pinMode(M1_FWR_PIN, OUTPUT);
-  pinMode(M1_REV_PIN, OUTPUT);
-  pinMode(M2_FWR_PIN, OUTPUT);
-  pinMode(M2_REV_PIN, OUTPUT);
-  pinMode(M3_FWR_PIN, OUTPUT);
-  pinMode(M3_REV_PIN, OUTPUT);
-  pinMode(M4_FWR_PIN, OUTPUT);
-  pinMode(M4_REV_PIN, OUTPUT);
+  Serial.begin(115200);
+  servo.setPeriodHertz(50);
+	servo.attach(SERVO_PIN, 925, 1925);
+  servo.write(90);
 
-  digitalWrite(M1_FWR_PIN, 0);
-  digitalWrite(M1_REV_PIN, 0);
-  digitalWrite(M2_FWR_PIN, 0);
-  digitalWrite(M2_REV_PIN, 0);
-  digitalWrite(M3_FWR_PIN, 0);
-  digitalWrite(M3_REV_PIN, 0);
-  digitalWrite(M4_FWR_PIN, 0);
-  digitalWrite(M4_REV_PIN, 0);
-
-  analogWriteFrequency(500);
-
-  delay(3000);
+  delay(2000);
+  Serial.println("Program started");
 }
 
 void loop() {
+
+  motor_controller.torque_pos(0,75);
+  motor_controller.torque_pos(1,75);
+  motor_controller.torque_pos(2,75);
+  motor_controller.torque_pos(3,75);
   
-  analogWrite(M1_FWR_PIN, 255);
-  digitalWrite(M1_REV_PIN, 0);
+  delay(4000);
 
-  digitalWrite(M2_FWR_PIN, 0);
-  analogWrite(M2_REV_PIN, 255);
+  motor_controller.torque_pos(0,0);
+  motor_controller.torque_pos(1,0);
+  motor_controller.torque_pos(2,0);
+  motor_controller.torque_pos(3,0);
 
-  analogWrite(M3_FWR_PIN, 255);
-  digitalWrite(M3_REV_PIN, 0);
 
-  digitalWrite(M4_FWR_PIN, 0);
-  analogWrite(M4_REV_PIN, 255);
-
-  delay(3000);
+  delay(4000);
   
-  analogWrite(M1_FWR_PIN, 0);
-  digitalWrite(M1_REV_PIN, 0);
-
-  digitalWrite(M2_FWR_PIN, 0);
-  analogWrite(M2_REV_PIN, 0);
-
-  analogWrite(M3_FWR_PIN, 0);
-  digitalWrite(M3_REV_PIN, 0);
-
-  digitalWrite(M4_FWR_PIN, 0);
-  analogWrite(M4_REV_PIN, 0);
-
-  delay(8000);
 }
