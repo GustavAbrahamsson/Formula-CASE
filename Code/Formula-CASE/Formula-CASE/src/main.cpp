@@ -1,12 +1,13 @@
 #include <Arduino.h>
-#include "Motor_controller.h"
-#include <ESP32Servo.h>
+//#include "Motor_controller.h"
+//#include <ESP32Servo.h>
 
 // ADC pins
 #define HALL_EFF_1_PIN 5
 #define HALL_EFF_2_PIN 6
 #define HALL_EFF_3_PIN 7
 #define HALL_EFF_4_PIN 8
+
 #define BAT_SENSE_PIN 9
 
 // Motor sense pins ADC
@@ -20,36 +21,256 @@
 
 #define SERVO_DEFLECTION 50 // deg
 
+#define M1_FWR_PIN 37
+#define M1_REV_PIN 38
+#define M2_FWR_PIN 35
+#define M2_REV_PIN 36
+#define M3_FWR_PIN 39
+#define M3_REV_PIN 40
+#define M4_FWR_PIN 41
+#define M4_REV_PIN 42
 
-Motor_controller motor_controller = Motor_controller();
+// Assigned PWM channels
+#define M1_ASS_PWM_CHL 0
+#define M2_ASS_PWM_CHL 2
+#define M3_ASS_PWM_CHL 4
+#define M4_ASS_PWM_CHL 6 
 
-Servo servo;
+// Motor sense pins ADC
+#define M1_SENSE_PIN 1
+#define M2_SENSE_PIN 2
+#define M3_SENSE_PIN 3
+#define M4_SENSE_PIN 4
+
+#define MOTOR_PWM_BIT_RES 8
+#define MOTOR_PWM_FREQ 25000
+
+
+// Motor_controller motor_controller = Motor_controller();
+
+// Servo servo;
+uint8_t servo_channel;
 
 void setup() {
   Serial.begin(115200);
-  servo.setPeriodHertz(50);
-	servo.attach(SERVO_PIN, 925, 1925);
-  servo.write(90);
+  // servo.setPeriodHertz(50);
+	// servo_channel = servo.attach(SERVO_PIN, 925, 1925);
+  // servo.write(90);
 
   delay(2000);
-  Serial.println("Program started");
+
+  pinMode(M1_FWR_PIN, OUTPUT);
+  pinMode(M1_REV_PIN, OUTPUT);
+  pinMode(M2_FWR_PIN, OUTPUT);
+  pinMode(M2_REV_PIN, OUTPUT);
+  pinMode(M3_FWR_PIN, OUTPUT);
+  pinMode(M3_REV_PIN, OUTPUT);
+  pinMode(M4_FWR_PIN, OUTPUT);
+  pinMode(M4_REV_PIN, OUTPUT);
+
+  digitalWrite(M1_FWR_PIN, 0);
+  digitalWrite(M1_REV_PIN, 0);
+  digitalWrite(M2_FWR_PIN, 0);
+  digitalWrite(M2_REV_PIN, 0);
+  digitalWrite(M3_FWR_PIN, 0);
+  digitalWrite(M3_REV_PIN, 0);
+  digitalWrite(M4_FWR_PIN, 0);
+  digitalWrite(M4_REV_PIN, 0);
+
+
+  //Serial.println("Program started");
+  // Serial.println("Servo channel: "+String(servo_channel));
+
+  //motor_controller.begin();
+
+  ledcDetachPin(M1_FWR_PIN);
+  ledcDetachPin(M1_REV_PIN);
+  ledcDetachPin(M2_FWR_PIN);
+  ledcDetachPin(M2_REV_PIN);
+  ledcDetachPin(M3_FWR_PIN);
+  ledcDetachPin(M3_REV_PIN);
+  ledcDetachPin(M4_FWR_PIN);
+  ledcDetachPin(M4_REV_PIN);
+  
+  ledcDetachPin(SERVO_PIN);
+
+
+  // digitalWrite(M1_FWR_PIN, 0);
+  // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // ledcAttachPin(M1_FWR_PIN, M1_ASS_PWM_CHL);
+
+  digitalWrite(M2_FWR_PIN, 0);
+  ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M2_REV_PIN, M2_ASS_PWM_CHL);
+  
+  // digitalWrite(M3_REV_PIN, 0);
+  // ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // ledcAttachPin(M3_FWR_PIN, M3_ASS_PWM_CHL);
+
+  digitalWrite(M4_FWR_PIN, 0);
+  ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M4_REV_PIN, M4_ASS_PWM_CHL);
+
+  // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+
 }
 
 void loop() {
+  Serial.println("T > 0");
+  ledcWrite(M4_ASS_PWM_CHL, 100);
+  delay(5000);
+  Serial.println("T = 0\n");
+  ledcWrite(M4_ASS_PWM_CHL, 0);
+  delay(2000);
 
-  motor_controller.torque_pos(0,75);
-  motor_controller.torque_pos(1,75);
-  motor_controller.torque_pos(2,75);
-  motor_controller.torque_pos(3,75);
+
+
+
+
+
+
+
+
+  // ledcWrite(M1_ASS_PWM_CHL, 10);
+  // delay(10);
+  // ledcWrite(M2_ASS_PWM_CHL, 10);
+  // delay(10);
+  // // ledcWrite(M3_ASS_PWM_CHL, 10);
+  // delay(10);
+  // ledcWrite(M4_ASS_PWM_CHL, 10);
+
+  // delay(500);
+
+  // // ledcWrite(M1_ASS_PWM_CHL, 0);
+  // delay(10);
+  // ledcWrite(M2_ASS_PWM_CHL, 0);
+  // delay(10);
+  // // ledcWrite(M3_ASS_PWM_CHL, 0);
+  // delay(10);
+  // ledcWrite(M4_ASS_PWM_CHL, 0);
+  // delay(3000);
+
+  // // ledcDetachPin(M1_FWR_PIN);
+  // // delay(10);
+  // // digitalWrite(M1_FWR_PIN, 0);
+  // // delay(10);
+  // // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // // delay(10);
+  // // ledcAttachPin(M1_REV_PIN, M1_ASS_PWM_CHL);
+
+  // delay(10);
+  // ledcDetachPin(M2_FWR_PIN);
+  // // ledcDetachPin(M2_REV_PIN);
+  // delay(10);
+  // pinMode(M2_FWR_PIN, OUTPUT);
+  // digitalWrite(M2_FWR_PIN, 0);
+  // delay(10);
+  // // ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // delay(10);
+  // ledcAttachPin(M2_REV_PIN, M2_ASS_PWM_CHL);
   
-  delay(4000);
+  // // delay(10);
+  // // ledcDetachPin(M3_FWR_PIN);
+  // // delay(10);
+  // // digitalWrite(M3_FWR_PIN, 0);
+  // // delay(10);
+  // // // ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // // delay(10);
+  // // ledcAttachPin(M3_REV_PIN, M3_ASS_PWM_CHL);
 
-  motor_controller.torque_pos(0,0);
-  motor_controller.torque_pos(1,0);
-  motor_controller.torque_pos(2,0);
-  motor_controller.torque_pos(3,0);
+  // delay(10);
+  // ledcDetachPin(M4_FWR_PIN);
+  // // ledcDetachPin(M4_REV_PIN);
+  // delay(10);
+  // digitalWrite(M4_FWR_PIN, 0);
+  // delay(10);
+  // // ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // delay(10);
+  // ledcAttachPin(M4_REV_PIN, M4_ASS_PWM_CHL);
+  // delay(10);
+  
+
+  // // ledcWrite(M1_ASS_PWM_CHL, 10);
+  // delay(10);
+  // ledcWrite(M2_ASS_PWM_CHL, 10);
+  // delay(10);
+  // // ledcWrite(M3_ASS_PWM_CHL, 10);
+  // delay(10);
+  // ledcWrite(M4_ASS_PWM_CHL, 10);
+  // delay(500);
+  // // ledcWrite(M1_ASS_PWM_CHL, 0);
+  // ledcWrite(M2_ASS_PWM_CHL, 0);
+  // // ledcWrite(M3_ASS_PWM_CHL, 0);
+  // ledcWrite(M4_ASS_PWM_CHL, 0);
+  // delay(4000);
+
+  // // ledcDetachPin(M1_REV_PIN);
+  // // delay(10);
+  // // digitalWrite(M1_REV_PIN, 0);
+  // // delay(10);
+  // // // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // // delay(10);
+  // // ledcAttachPin(M1_FWR_PIN, M1_ASS_PWM_CHL);
+  // // delay(10);
+
+  // ledcDetachPin(M2_REV_PIN);
+  // // ledcDetachPin(M2_FWR_PIN);
+  // delay(10);
+  // digitalWrite(M2_REV_PIN, 0);
+  // delay(10);
+  // // ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // delay(10);
+  // ledcAttachPin(M2_FWR_PIN, M2_ASS_PWM_CHL);
+  // delay(10);
+  
+  // // ledcDetachPin(M3_REV_PIN);
+  // // delay(10); 
+  // // digitalWrite(M3_REV_PIN, 0);
+  // // delay(10);
+  // // // ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // // delay(10);
+  // // ledcAttachPin(M3_FWR_PIN, M3_ASS_PWM_CHL);
+  // // delay(10);
+
+  // ledcDetachPin(M4_REV_PIN);
+  // // ledcDetachPin(M4_FWR_PIN);
+  // delay(10);
+  // digitalWrite(M4_REV_PIN, 0);
+  // delay(10);
+  // // ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  // delay(10);
+  // ledcAttachPin(M4_FWR_PIN, M4_ASS_PWM_CHL);
+
+  // delay(10);
+  // motor_controller.forward(0,1);
+  // motor_controller.forward(1,1);
+  // motor_controller.forward(2,1);
+  // motor_controller.forward(3,1);
+  
+  // delay(4000);
+
+  // motor_controller.forward(0,0);
+  // motor_controller.forward(1,0);
+  // motor_controller.forward(2,0);
+  // motor_controller.forward(3,0);
 
 
-  delay(4000);
+  // delay(4000);
+
+  
+  // motor_controller.reverse(0,1);
+  // motor_controller.reverse(1,1);
+  // motor_controller.reverse(2,1);
+  // motor_controller.reverse(3,1);
+  
+  // delay(4000);
+
+  // motor_controller.reverse(0,0);
+  // motor_controller.reverse(1,0);
+  // motor_controller.reverse(2,0);
+  // motor_controller.reverse(3,0);
+
+
+  // delay(4000);
   
 }

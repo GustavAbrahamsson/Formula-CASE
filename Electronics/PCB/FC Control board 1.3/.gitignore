@@ -1,0 +1,3 @@
+/**/*.zip
+/Gerber_files/*
+!/Gerber_files/*.zip

@@ -13,10 +13,10 @@
 #define M4_REV_PIN 42
 
 // Assigned PWM channels
-#define M1_ASS_PWM_CHL 7
-#define M2_ASS_PWM_CHL 3
-#define M3_ASS_PWM_CHL 4
-#define M4_ASS_PWM_CHL 5
+#define M1_ASS_PWM_CHL 1
+#define M2_ASS_PWM_CHL 2
+#define M3_ASS_PWM_CHL 3
+#define M4_ASS_PWM_CHL 4 
 
 // Motor sense pins ADC
 #define M1_SENSE_PIN 1
@@ -43,9 +43,10 @@ class Motor{
 
   public:
   Motor(uint8_t fwr_pin, uint8_t rev_pin, uint8_t pwm_chl, uint16_t pwm_freq, uint8_t pwm_res, bool switch_dir);
+  void begin();
 
-  void torque_pos(uint8_t value);
-  void torque_neg(uint8_t value);
+  void forward(uint8_t value);
+  void reverse(uint8_t value);
   void coast();
   void write_Nm(float torque);
 
@@ -62,16 +63,20 @@ class Motor_controller{
   private:
   Motor motor_1 = Motor(M1_FWR_PIN, M1_REV_PIN, M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 0);
   Motor motor_2 = Motor(M2_FWR_PIN, M2_REV_PIN, M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 1);
-  Motor motor_3 = Motor(M3_FWR_PIN, M3_REV_PIN, M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 0);
-  Motor motor_4 = Motor(M4_FWR_PIN, M4_REV_PIN, M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 1);
+  // Motor motor_3 = Motor(M3_FWR_PIN, M3_REV_PIN, M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 0);
+  // Motor motor_4 = Motor(M4_FWR_PIN, M4_REV_PIN, M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES, 1);
   
-  Motor* motors[4] = {&motor_1, &motor_2, &motor_3, &motor_4};
+  static const uint8_t num_motors = 2 ;
+
+  // Motor* motors[num_motors] = {&motor_1, &motor_2, &motor_3, &motor_4};
+  Motor* motors[num_motors] = {&motor_1, &motor_2};
 
   public:
   Motor_controller();
+  void begin();
 
-  void torque_pos(int8_t motor, uint8_t value);
-  void torque_neg(int8_t motor, uint8_t value);
+  void forward(int8_t motor, uint8_t value);
+  void reverse(int8_t motor, uint8_t value);
 
   int read_speed(uint8_t motor);
 };
