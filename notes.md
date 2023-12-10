@@ -61,5 +61,22 @@ Mac address for the board can be gotten by using `env:print-mac` and reading ser
 #### Additional features
   - [x] Add tail-light LED
 
-#### What's left
+#### Improvements
   - [ ] Add IMU
+  - [ ] Fix button footprints
+  - [ ] Add reverse current diodes for LDOs
+  - [ ] Add small switch with MOSFET to connect/disconnect battery
+  - [ ] Change motor drivers
+  - [ ] Add fuse for USB
+  - [ ] Add undervoltage protection for the battery
+
+### FC Control board v1.3 [WIP]
+#### Addressed issues
+  - [x] Add IMU
+  - [x] Fix button footprints
+  - [x] Add reverse current diodes for LDOs
+  - [x] Add small switch with MOSFET to connect/disconnect battery
+  - [x] Change motor drivers
+  - [x] Add fuse for USB
+
+#### Improvements
