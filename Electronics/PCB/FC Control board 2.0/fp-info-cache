@@ -1,0 +1,71 @@
+17004442886475
+FC_footprint_library
+1043_18650_Li-ion
+
+
+0
+2
+2
+FC_footprint_library
+CUHS20S30,H3F
+
+
+0
+2
+2
+FC_footprint_library
+ESP32-S3-WROOM-1-N8
+
+
+0
+41
+41
+FC_footprint_library
+LSM6DSM
+LGA, 14 Pin (https://www.st.com/resource/en/datasheet/lsm6ds3tr-c.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
+LGA NoLead
+0
+14
+14
+FC_footprint_library
+LSS12-P-V-B
+
+
+0
+3
+3
+FC_footprint_library
+SOP65P640X120-20N
+
+
+0
+20
+20
+FC_footprint_library
+SOP100P600X175-10N
+LN,10-Pin SOIC
+Integrated Circuit
+0
+10
+10
+FC_footprint_library
+SW_Push_6x6mm_H9.5mm
+tactile push button, 6x6mm e.g. PTS645xx series, height=9.5mm
+tact sw push 6mm smd
+0
+4
+2
+FC_footprint_library
+XS3A2467PWJ _TSSOP-16_4.4x5mm_P0.65mm
+TSSOP, 16 Pin (JEDEC MO-153 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-153), generated with kicad-footprint-generator ipc_gullwing_generator.py
+TSSOP SO
+0
+16
+16
+FC_footprint_library
+ZXBM5210
+
+
+0
+8
+8

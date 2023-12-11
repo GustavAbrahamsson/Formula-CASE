@@ -3436,6 +3436,14 @@
     (stroke (width 0) (type default))
     (uuid 3a921165-7eeb-4f10-9b7f-fce7aac26683)
   )
+  (wire (pts (xy 208.28 120.65) (xy 208.28 121.92))
+    (stroke (width 0) (type default))
+    (uuid 3aade5eb-3fcf-4ad2-acf6-7107da20f973)
+  )
+  (wire (pts (xy 208.28 114.3) (xy 208.28 115.57))
+    (stroke (width 0) (type default))
+    (uuid 3be08363-4496-45fe-91e8-63d7a3f27393)
+  )
   (wire (pts (xy 232.41 204.47) (xy 241.3 204.47))
     (stroke (width 0) (type default))
     (uuid 3bfdf64c-9460-425d-af5c-9cc3bff2915e)
@@ -4433,10 +4441,6 @@
     (stroke (width 0) (type default))
     (uuid de8368f2-6480-46f6-8291-e1f2c0642b87)
   )
-  (wire (pts (xy 208.28 119.38) (xy 208.28 121.92))
-    (stroke (width 0) (type default))
-    (uuid e00a4eae-dc53-4554-a7ea-8e115d19ed86)
-  )
   (wire (pts (xy 43.18 97.79) (xy 54.61 97.79))
     (stroke (width 0) (type default))
     (uuid e127902c-1b94-4c75-be37-a47fdcbf0bd2)
@@ -5153,7 +5157,7 @@
     )
     (pin "1" (uuid 2eaa92f4-8eb6-4577-8197-b5372081c963))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR018") (unit 1)
         )
@@ -5178,7 +5182,7 @@
     )
     (pin "1" (uuid 72a7d43e-6db0-4420-875f-61cf14273475))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0109") (unit 1)
         )
@@ -5209,7 +5213,7 @@
           (reference "D11") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D6") (unit 1)
         )
@@ -5234,7 +5238,7 @@
     )
     (pin "1" (uuid 02748770-3d79-4ccb-9404-1c997cfd1048))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR010") (unit 1)
         )
@@ -5261,7 +5265,7 @@
     (pin "2" (uuid 81639749-1ed9-47e3-a76f-578a43bfeda6))
     (pin "3" (uuid a5b70448-2e4f-43af-9c6e-7d88e52a18d2))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J3") (unit 1)
         )
@@ -5286,7 +5290,7 @@
     )
     (pin "1" (uuid 43c3c34b-008b-49b5-b9bf-f4ba82a5d374))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0119") (unit 1)
         )
@@ -5338,7 +5342,7 @@
     (pin "8" (uuid d7d94385-f282-41e6-823e-bfa0be9c123b))
     (pin "9" (uuid d7712024-0d9d-4d90-bf3f-39e33262e226))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "IC2") (unit 1)
         )
@@ -5363,7 +5367,7 @@
     )
     (pin "1" (uuid c0482792-6f89-496e-8eb6-eaf4f66e42cd))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR016") (unit 1)
         )
@@ -5389,7 +5393,7 @@
     (pin "1" (uuid 9f04b5b4-aade-4159-8700-04b079b029ac))
     (pin "2" (uuid 429baf41-fb67-4e43-b8df-72a75727b9f3))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C9") (unit 1)
         )
@@ -5414,7 +5418,7 @@
     )
     (pin "1" (uuid 15696240-a4df-45d2-8301-2bd024c6943e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR026") (unit 1)
         )
@@ -5440,7 +5444,7 @@
     (pin "1" (uuid 83bb6b50-1f70-4cdf-8aa9-6b2e4f22c297))
     (pin "2" (uuid c07020f4-9dfb-466d-9b64-bfd98429b461))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "M2") (unit 1)
         )
@@ -5466,7 +5470,7 @@
     (pin "1" (uuid da243bdd-eb6a-45d1-a5f3-9ecd30f7a66d))
     (pin "2" (uuid 5b32e5c1-c598-4bd5-88b2-460b8d2e29cc))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D5") (unit 1)
         )
@@ -5491,7 +5495,7 @@
     )
     (pin "1" (uuid 37ddd50a-97db-4171-b7a1-3085ea4f9145))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0111") (unit 1)
         )
@@ -5517,7 +5521,7 @@
     (pin "1" (uuid d6d40b07-4362-4df4-aa8e-7a30191bf8a3))
     (pin "2" (uuid f6209f00-c5fb-48df-bb78-3fb00ee2ac79))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R12") (unit 1)
         )
@@ -5543,7 +5547,7 @@
     (pin "1" (uuid d58cb17a-c2eb-49ca-85ca-f27f9ffc0d2d))
     (pin "2" (uuid 167ba82f-df89-45ef-970b-592e3e3d1aac))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R5") (unit 1)
         )
@@ -5568,7 +5572,7 @@
     )
     (pin "1" (uuid dadad3bc-7114-40af-8b7d-bcfe83ced6f6))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#FLG02") (unit 1)
         )
@@ -5594,7 +5598,7 @@
     (pin "1" (uuid 99a35dfd-7b25-410e-b1b1-bee9a56755d2))
     (pin "2" (uuid ed7520fd-877c-437b-ac8d-2995bc3eb319))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C12") (unit 1)
         )
@@ -5619,7 +5623,7 @@
     )
     (pin "1" (uuid eb90e5ef-93a3-43d9-8043-6a3fc80d705f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR032") (unit 1)
         )
@@ -5644,7 +5648,7 @@
     )
     (pin "1" (uuid d6bbd90f-1caa-4ed5-b9fd-623cca002e99))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR033") (unit 1)
         )
@@ -5669,7 +5673,7 @@
     )
     (pin "1" (uuid 5516ef7c-ac2e-4aec-a9c4-b3608272ce7d))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR048") (unit 1)
         )
@@ -5695,7 +5699,7 @@
     (pin "1" (uuid 817f1dc4-d349-49ec-91c1-12ab5d507fc8))
     (pin "2" (uuid 6ad8bfce-7253-4b91-97d2-6453a5584f84))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R4") (unit 1)
         )
@@ -5720,7 +5724,7 @@
     )
     (pin "1" (uuid 2356061f-e616-4da5-8cc2-43129c618f45))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR044") (unit 1)
         )
@@ -5753,7 +5757,7 @@
     (pin "8" (uuid 88b08fcd-2405-44a7-b425-70fa6ad6a1dd))
     (pin "9" (uuid d0da5db1-db43-4de3-a7db-ce8c9cfb6173))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U9") (unit 3)
         )
@@ -5779,7 +5783,7 @@
     (pin "1" (uuid 4862af79-2381-412d-a24d-bf00d41f1284))
     (pin "2" (uuid a7f4a63a-016f-4874-8f22-a54467e98197))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J2") (unit 1)
         )
@@ -5804,7 +5808,7 @@
     )
     (pin "1" (uuid 272306a5-142a-429a-ba14-71a23e7ddf2f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR036") (unit 1)
         )
@@ -5830,7 +5834,7 @@
     (pin "1" (uuid 75d6a429-2515-4d28-8880-81edf9e48262))
     (pin "2" (uuid 2e7b60bf-a0ef-4e1c-8a0f-44f243c331e8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "BZ1") (unit 1)
         )
@@ -5856,7 +5860,7 @@
     (pin "1" (uuid e399ac3b-853b-4019-96cd-e32dbe15a3d6))
     (pin "2" (uuid bba292dd-b6b7-47bd-a322-fefe9c9a3490))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "M1") (unit 1)
         )
@@ -5881,7 +5885,7 @@
     )
     (pin "1" (uuid a6f08002-5a33-43c0-aed5-973bba0b85c5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR031") (unit 1)
         )
@@ -5906,7 +5910,7 @@
     )
     (pin "1" (uuid 3333f6b6-0c00-454f-b912-c83bbbb73592))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR046") (unit 1)
         )
@@ -5975,7 +5979,7 @@
     (pin "8" (uuid 3abe1771-6e6a-4d29-ab0f-28c90c001c19))
     (pin "9" (uuid 526b4660-deb7-4474-95b7-91dce6b2c1c8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U6") (unit 1)
         )
@@ -6001,7 +6005,7 @@
     (pin "1" (uuid cee35da2-86a3-466c-a526-a367da289d47))
     (pin "2" (uuid 0ddc3a59-98e9-48a5-8120-fa3d0c436804))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_S1") (unit 1)
         )
@@ -6026,7 +6030,7 @@
     )
     (pin "1" (uuid c020a4d6-e5c4-46b9-beef-4b43810ae0c4))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR042") (unit 1)
         )
@@ -6051,7 +6055,7 @@
     )
     (pin "1" (uuid 193e5386-e02e-4499-a88e-fe44929dcea5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR025") (unit 1)
         )
@@ -6077,7 +6081,7 @@
     (pin "1" (uuid aa334d1e-5ef6-4ee5-bfd1-ac7baed2065e))
     (pin "2" (uuid f826ec1d-cdb0-49a1-bec5-494a1e3645b8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C11") (unit 1)
         )
@@ -6107,7 +6111,7 @@
           (reference "#PWR0115") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR024") (unit 1)
         )
@@ -6132,7 +6136,7 @@
     )
     (pin "1" (uuid a9ed21ff-e715-45a1-b685-719ab5581efa))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0122") (unit 1)
         )
@@ -6157,7 +6161,7 @@
     )
     (pin "1" (uuid 65aef07c-df47-4dad-ba72-beb153a90977))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR09") (unit 1)
         )
@@ -6182,7 +6186,7 @@
     )
     (pin "1" (uuid f0f45dc1-bf93-4c62-b3b4-1e6de965555b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR015") (unit 1)
         )
@@ -6207,7 +6211,7 @@
     )
     (pin "1" (uuid f63dd01b-d31b-4c8b-8944-cc162e8dda4e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0103") (unit 1)
         )
@@ -6233,7 +6237,7 @@
     (pin "1" (uuid ddb99067-627f-47e8-9fb0-c38014e116be))
     (pin "2" (uuid b6c06dc1-a093-4196-9677-09ee2a455399))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_bat1") (unit 1)
         )
@@ -6258,7 +6262,7 @@
     )
     (pin "1" (uuid 26f839d5-4d05-4dec-9b37-976f7d5f6f48))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0118") (unit 1)
         )
@@ -6283,7 +6287,7 @@
     )
     (pin "1" (uuid 60e92434-d444-4215-8c47-f97fbf6d1113))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR021") (unit 1)
         )
@@ -6309,7 +6313,7 @@
     (pin "1" (uuid 34e4c084-25ed-4154-b584-44597cd86748))
     (pin "2" (uuid b8a69dfb-4ff5-4171-8662-f4fd81f9fc4a))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R2") (unit 1)
         )
@@ -6334,7 +6338,7 @@
     )
     (pin "1" (uuid 1a406fdb-1a20-4965-b96a-9d98a341c7e8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR060") (unit 1)
         )
@@ -6359,7 +6363,7 @@
     )
     (pin "1" (uuid 7922c2a8-6c7e-4b0b-9159-0e4ba9d4fb37))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR056") (unit 1)
         )
@@ -6389,7 +6393,7 @@
           (reference "#PWR0115") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR017") (unit 1)
         )
@@ -6415,7 +6419,7 @@
     (pin "1" (uuid 046621e2-b06b-4158-acc0-e3ea0494675f))
     (pin "2" (uuid 150c9333-f7b8-4e14-adfd-c72aa29ee196))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C16") (unit 1)
         )
@@ -6441,7 +6445,7 @@
     (pin "1" (uuid 76ed38c9-6cbf-4996-a70a-116535868f18))
     (pin "2" (uuid 1c990597-ef0b-4a76-9eec-3b6963309c86))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C8") (unit 1)
         )
@@ -6468,7 +6472,7 @@
     (pin "2" (uuid 76141d73-5118-41e9-a7f3-e34008f00586))
     (pin "3" (uuid 2d148b08-311d-4fc8-8171-2e47b126230e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J7") (unit 1)
         )
@@ -6494,7 +6498,7 @@
     (pin "1" (uuid 8b6f980e-ea4f-4b84-b3d3-77fe02511849))
     (pin "2" (uuid a9c3bdaa-fab4-451c-a38a-fd9d9b673d6c))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R3") (unit 1)
         )
@@ -6519,7 +6523,7 @@
     )
     (pin "1" (uuid 84d7286d-121d-483d-8780-9266f8f3cb13))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR023") (unit 1)
         )
@@ -6544,7 +6548,7 @@
     )
     (pin "1" (uuid f1f01a3e-3c4f-4663-9fc9-8f8519398ea3))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR040") (unit 1)
         )
@@ -6582,7 +6586,7 @@
     (pin "8" (uuid b641a797-b1a7-4d41-94b8-0e112fb7a954))
     (pin "9" (uuid 8208175f-e863-4557-9bd2-a2db9755af54))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U8") (unit 1)
         )
@@ -6608,7 +6612,7 @@
     (pin "1" (uuid 21d736fb-a60a-4813-b236-4c5c6b570193))
     (pin "2" (uuid 8635e48a-0b66-4b48-bc25-2f4bce6adb8e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C21") (unit 1)
         )
@@ -6634,7 +6638,7 @@
     (pin "1" (uuid 7e00621c-8739-45e3-ad7f-3ff205cdff73))
     (pin "2" (uuid 8a56c616-1d93-4c46-96ab-acb8b977af07))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C4") (unit 1)
         )
@@ -6665,7 +6669,7 @@
           (reference "D11") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D3") (unit 1)
         )
@@ -6690,7 +6694,7 @@
     )
     (pin "1" (uuid 4558d878-581e-4105-8e66-c183c4f2f9a5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR02") (unit 1)
         )
@@ -6715,7 +6719,7 @@
     )
     (pin "1" (uuid 29fdc9ce-f2d9-4191-92b3-77d9602b0099))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR019") (unit 1)
         )
@@ -6740,7 +6744,7 @@
     )
     (pin "1" (uuid c0d76dd2-c725-41bf-9b43-5e90833f9424))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR055") (unit 1)
         )
@@ -6766,7 +6770,7 @@
     (pin "1" (uuid 9d5d29fc-2a49-48de-bc01-76eb8dc97d40))
     (pin "2" (uuid 22de4f33-d977-438b-9538-466300be2456))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_S2") (unit 1)
         )
@@ -6791,9 +6795,35 @@
     )
     (pin "1" (uuid 7fe2163a-58c0-48c8-849d-08437fd006d5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR047") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Device:R_Small") (at 208.28 118.11 180) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid 62a13ed1-906b-4328-9ebb-2b586fdee280)
+    (property "Reference" "R14" (at 210.82 116.84 0)
+      (effects (font (size 1.27 1.27)) (justify right))
+    )
+    (property "Value" "10K" (at 210.82 119.38 0)
+      (effects (font (size 1.27 1.27)) (justify right))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (at 208.28 118.11 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 208.28 118.11 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid d155d10c-6c02-496e-912f-19d8ad5e2192))
+    (pin "2" (uuid 416fe02b-7339-4748-a22e-b8efc7605ad8))
+    (instances
+      (project "FC Control board 2.0"
+        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+          (reference "R14") (unit 1)
         )
       )
     )
@@ -6821,7 +6851,7 @@
           (reference "#PWR0115") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR06") (unit 1)
         )
@@ -6846,7 +6876,7 @@
     )
     (pin "1" (uuid 628b9cdb-39ac-4a41-9588-cdb177e90d85))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR020") (unit 1)
         )
@@ -6871,7 +6901,7 @@
     )
     (pin "1" (uuid a9de35fc-39b9-4afb-a536-405c29d73993))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR01") (unit 1)
         )
@@ -6896,7 +6926,7 @@
     )
     (pin "1" (uuid bc602caf-322a-4006-81b8-40918cb5b699))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR014") (unit 1)
         )
@@ -6922,7 +6952,7 @@
     (pin "1" (uuid 43376f38-1380-4bc4-b7ff-867af7eff936))
     (pin "2" (uuid 177bc19e-84b9-4253-9df4-0d049f31d898))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C15") (unit 1)
         )
@@ -6948,7 +6978,7 @@
     (pin "1" (uuid 2328fde6-58b4-4b08-81e4-e324000e680b))
     (pin "2" (uuid cd8f887a-ae4e-4851-a6a9-9661872bfdba))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_S3") (unit 1)
         )
@@ -6973,7 +7003,7 @@
     )
     (pin "1" (uuid 94b40fef-8e3d-4a32-a137-035c86ca86c8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0105") (unit 1)
         )
@@ -6999,7 +7029,7 @@
     (pin "1" (uuid 481d3a15-82fe-4592-b144-18d4005b37e1))
     (pin "2" (uuid ddb2d181-70af-4871-8697-3484f1a53145))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "BT1") (unit 1)
         )
@@ -7025,7 +7055,7 @@
     (pin "1" (uuid cfc50954-2efa-4181-8963-73f49726194d))
     (pin "2" (uuid d2c2c9b0-4bde-4177-acf0-5ade7c53bc8b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C10") (unit 1)
         )
@@ -7065,7 +7095,7 @@
     (pin "8" (uuid 5923c451-2ba1-4b2c-bf24-373672d0db68))
     (pin "9" (uuid d00086d4-fedd-4592-8928-345cf9f6367e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U5") (unit 1)
         )
@@ -7090,7 +7120,7 @@
     )
     (pin "1" (uuid 8b7e7bde-8d3d-4b84-a542-dd86facb0a3e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR051") (unit 1)
         )
@@ -7120,7 +7150,7 @@
           (reference "#PWR0115") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR022") (unit 1)
         )
@@ -7145,7 +7175,7 @@
     )
     (pin "1" (uuid 113efb41-0650-46a1-864c-e9da0955e4f9))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0113") (unit 1)
         )
@@ -7172,7 +7202,7 @@
     (pin "2" (uuid b79fb8de-2589-4f1a-9bd7-a80442a785c6))
     (pin "3" (uuid 1614b05a-cf9c-423f-8bd9-435848e0c5fe))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "RV1") (unit 1)
         )
@@ -7224,7 +7254,7 @@
     (pin "8" (uuid 94fe569d-ace1-40e0-b333-4304b75ba5bd))
     (pin "9" (uuid c639aaa3-1569-4645-a79d-302d0592f9e1))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "IC1") (unit 1)
         )
@@ -7251,7 +7281,7 @@
     (pin "2" (uuid cc1dd085-f699-4a99-bd23-e72eff710c2d))
     (pin "3" (uuid a3e4d295-22a0-4bf2-835f-3baed990f08b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U7") (unit 1)
         )
@@ -7277,7 +7307,7 @@
     (pin "1" (uuid 7ab494a0-908c-41f1-8e9f-c7cc19c033e1))
     (pin "2" (uuid ddc1c330-47f1-4a5f-85f4-c0a31673db4a))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R8") (unit 1)
         )
@@ -7285,24 +7315,24 @@
     )
   )
 
-  (symbol (lib_id "power:+3V3") (at 208.28 119.38 0) (unit 1)
+  (symbol (lib_id "power:+3V3") (at 208.28 114.3 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 7b603d44-f809-4978-8103-42ca7de07dee)
-    (property "Reference" "#PWR057" (at 208.28 123.19 0)
+    (property "Reference" "#PWR057" (at 208.28 118.11 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Value" "+3V3" (at 212.09 118.11 0)
+    (property "Value" "+3V3" (at 212.09 113.03 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at 208.28 119.38 0)
+    (property "Footprint" "" (at 208.28 114.3 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "" (at 208.28 119.38 0)
+    (property "Datasheet" "" (at 208.28 114.3 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 1c8183bd-9709-4955-9132-d3a9eca3a0ee))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR057") (unit 1)
         )
@@ -7342,7 +7372,7 @@
     (pin "8" (uuid c5b5a958-994d-46c9-a3ee-6c7746771997))
     (pin "9" (uuid 70d420db-e8fe-4b32-a8cf-e0f482e1729b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U4") (unit 1)
         )
@@ -7367,7 +7397,7 @@
     )
     (pin "1" (uuid da2f67c1-12ac-4543-a42f-2cbb3b44a7c2))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR08") (unit 1)
         )
@@ -7392,7 +7422,7 @@
     )
     (pin "1" (uuid a9a009e5-6c18-414f-ac4f-acef7ec638ed))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR039") (unit 1)
         )
@@ -7417,7 +7447,7 @@
     )
     (pin "1" (uuid 9bba3a23-a3f8-4477-b9ff-b96b1ff769a7))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR045") (unit 1)
         )
@@ -7442,7 +7472,7 @@
     )
     (pin "1" (uuid 8d0d9b77-0b3b-45b2-8249-6d7e372b6a44))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR030") (unit 1)
         )
@@ -7468,7 +7498,7 @@
     (pin "1" (uuid b85e1662-4f15-42f3-a115-7c8ba8390893))
     (pin "2" (uuid cb847bb2-4127-484a-a631-b7d43ba4cf97))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C3") (unit 1)
         )
@@ -7493,7 +7523,7 @@
     )
     (pin "1" (uuid 2d250013-13dc-4eaf-8758-81e56b9e4895))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR054") (unit 1)
         )
@@ -7518,7 +7548,7 @@
     )
     (pin "1" (uuid a61e1e8e-ad4e-4c6a-8181-f6ca840ff6dc))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0120") (unit 1)
         )
@@ -7543,7 +7573,7 @@
     )
     (pin "1" (uuid 65973b0e-c08e-4179-a332-e212bf414fae))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR011") (unit 1)
         )
@@ -7569,7 +7599,7 @@
     (pin "1" (uuid 6446bb5c-5b18-4bba-83d7-ed5bd88f2b88))
     (pin "2" (uuid 46ac0754-6090-40b0-aa48-0cf27856a867))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C14") (unit 1)
         )
@@ -7594,7 +7624,7 @@
     )
     (pin "1" (uuid 3dfb9ecd-9bf3-4c0b-973b-242e8c867417))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR037") (unit 1)
         )
@@ -7620,7 +7650,7 @@
     (pin "1" (uuid 39beeb58-f67a-4a0f-86a6-e140782e1d1c))
     (pin "2" (uuid 3175852f-41ae-4627-b0eb-4e96dd7a7d10))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C19") (unit 1)
         )
@@ -7646,7 +7676,7 @@
     (pin "1" (uuid 4771ebb5-81b6-4dcc-966c-d0a4e2338c7e))
     (pin "2" (uuid 690b9765-0c3e-45f6-9803-d49d854fc32e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C17") (unit 1)
         )
@@ -7672,7 +7702,7 @@
     (pin "1" (uuid 541dc1c2-6d08-40e1-9e8b-9c3d61036434))
     (pin "2" (uuid aa1b4e0f-6e16-4c00-903f-495d99cf5b4b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "M0") (unit 1)
         )
@@ -7737,7 +7767,7 @@
     (pin "8" (uuid a423831e-88ac-4a68-9c71-f45f1ed26efe))
     (pin "9" (uuid 943774cd-fd7f-4a22-a698-fc0a9db6e64b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U1") (unit 1)
         )
@@ -7778,7 +7808,7 @@
     (pin "B9" (uuid 937939a7-3d48-498a-98b7-bb48d04ada01))
     (pin "S1" (uuid e9f702de-b437-4ae2-a03e-b707e9309898))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J1") (unit 1)
         )
@@ -7805,7 +7835,7 @@
     (pin "2" (uuid 34366171-e73a-4aac-9230-f93c31447e35))
     (pin "3" (uuid 0a89b28b-bd8f-4349-827c-199c2ce72a6f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "Q1") (unit 1)
         )
@@ -7836,7 +7866,7 @@
           (reference "C8") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C6") (unit 1)
         )
@@ -7861,7 +7891,7 @@
     )
     (pin "1" (uuid 1038b55b-1365-4a5a-8cb9-add121dc6bdf))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0110") (unit 1)
         )
@@ -7886,7 +7916,7 @@
     )
     (pin "1" (uuid 06ed3bae-d9e9-4201-b000-49c390bc03c6))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR050") (unit 1)
         )
@@ -7913,7 +7943,7 @@
     (pin "2" (uuid e469e0b4-aa98-49cd-bdf1-cc481007ee16))
     (pin "3" (uuid ab5041fa-6b43-4f48-8e42-d36118fa0479))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J4") (unit 1)
         )
@@ -7938,7 +7968,7 @@
     )
     (pin "1" (uuid b4ffd93e-3f81-44b8-a949-46b3a305810f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR028") (unit 1)
         )
@@ -7965,7 +7995,7 @@
     (pin "2" (uuid a480cc1a-4671-4317-a450-409f9bff05b0))
     (pin "3" (uuid 97311976-e97a-40c3-892a-632fb9fa8fd3))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "ADR0") (unit 1)
         )
@@ -7991,7 +8021,7 @@
     (pin "1" (uuid 88c93cf6-3c94-4afc-9cdd-36f8eaae8f81))
     (pin "2" (uuid 60239b60-8f77-4a2d-9b5d-85575eb54fc5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R9") (unit 1)
         )
@@ -8017,7 +8047,7 @@
     (pin "1" (uuid 66cb49f2-27e4-404b-a4d4-103371f45efc))
     (pin "2" (uuid 225ed343-6e2c-4cec-8bfd-7d3248a0d9a3))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C18") (unit 1)
         )
@@ -8042,7 +8072,7 @@
     )
     (pin "1" (uuid 9d92a753-ee84-465a-aa39-b213e9c229cb))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR012") (unit 1)
         )
@@ -8068,7 +8098,7 @@
     (pin "1" (uuid 0e9236af-8ffa-4b07-a4fd-f835eec6157e))
     (pin "2" (uuid c8711abb-c3b2-494c-a833-26a9399f6e02))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C13") (unit 1)
         )
@@ -8095,7 +8125,7 @@
     (pin "2" (uuid 792c8cf9-9c82-45ee-a37d-8063659c85e3))
     (pin "3" (uuid 6e62816c-56a9-42bf-a1d3-393f9d9376b8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J5") (unit 1)
         )
@@ -8125,7 +8155,7 @@
           (reference "#PWR0113") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR05") (unit 1)
         )
@@ -8150,7 +8180,7 @@
     )
     (pin "1" (uuid c2c5421a-6135-434b-8075-e236742f8970))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR035") (unit 1)
         )
@@ -8176,7 +8206,7 @@
     (pin "1" (uuid 7cd7f63a-c80d-4e72-9ceb-3478c0ef1738))
     (pin "2" (uuid 9b9e4f49-fa16-42db-844d-6f607afeb674))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C2") (unit 1)
         )
@@ -8203,7 +8233,7 @@
     (pin "2" (uuid 050ae024-afda-4f5a-ac0b-017432c4f040))
     (pin "3" (uuid bf1758b2-1c5a-4c84-b6aa-516f1a2d8f0f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U2") (unit 1)
         )
@@ -8228,7 +8258,7 @@
     )
     (pin "1" (uuid cf20bfb1-8393-4551-8655-dcac7a3c32ba))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0107") (unit 1)
         )
@@ -8260,7 +8290,7 @@
           (reference "U4") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U3") (unit 1)
         )
@@ -8286,7 +8316,7 @@
     (pin "1" (uuid 17432f7d-290c-4765-8c2b-53d3aa95a12a))
     (pin "2" (uuid 51d66ebc-c4c6-4015-9772-1c13916a458a))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R6") (unit 1)
         )
@@ -8311,7 +8341,7 @@
     )
     (pin "1" (uuid b803b42d-94ca-477c-ada6-5db2d2e3cf0b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR049") (unit 1)
         )
@@ -8336,7 +8366,7 @@
     )
     (pin "1" (uuid b6e2fd8f-01b7-465c-95c3-e97b2185b135))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR07") (unit 1)
         )
@@ -8362,7 +8392,7 @@
     (pin "1" (uuid 05e0b610-324a-4c07-af4a-d166d2b8ae5f))
     (pin "2" (uuid 175463bc-db5e-4509-b6c8-9c64d50fb4b8))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "M3") (unit 1)
         )
@@ -8388,7 +8418,7 @@
     (pin "1" (uuid 17df113e-151d-4800-a90c-61fc89d54361))
     (pin "2" (uuid 6aa0e69d-ae7c-4ca7-8bd0-a7a95fc12903))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D2") (unit 1)
         )
@@ -8419,7 +8449,7 @@
           (reference "F1") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "F2") (unit 1)
         )
@@ -8445,7 +8475,7 @@
     (pin "1" (uuid 8e0139c3-0f8c-43ed-82ac-a1dd463e5663))
     (pin "2" (uuid d83f4d89-c246-4d05-bffe-f866e8acb868))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_bat2") (unit 1)
         )
@@ -8472,7 +8502,7 @@
     (pin "2" (uuid 8fec5a9b-fd9b-46a6-82ed-7524f5eed8cc))
     (pin "3" (uuid a09b152c-5fb4-4add-b9ce-cfe2e865133f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "SW4") (unit 1)
         )
@@ -8498,7 +8528,7 @@
     (pin "1" (uuid 3004fbce-a7df-4371-bfff-3630a8fd4cbf))
     (pin "2" (uuid 60dfc0d0-415e-4a2b-88bc-def9c7f6cf23))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R_S0") (unit 1)
         )
@@ -8523,7 +8553,7 @@
     )
     (pin "1" (uuid ccf163ee-b873-40fd-b28e-f90a3b0b996e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR03") (unit 1)
         )
@@ -8549,7 +8579,7 @@
     (pin "1" (uuid e6a0730b-e746-4aa5-b270-4f94e7a392f2))
     (pin "2" (uuid 380a94eb-f0e3-43da-ad0d-3a8a6db6093a))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "SW1") (unit 1)
         )
@@ -8576,7 +8606,7 @@
     (pin "2" (uuid ad4c185f-f049-4579-b0a1-7a2636e5b8cc))
     (pin "3" (uuid e77020a3-ff84-4074-a21c-b20af114c3ee))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "J6") (unit 1)
         )
@@ -8601,7 +8631,7 @@
     )
     (pin "1" (uuid 73dfe805-1303-4a62-abb6-7178ae9d07ab))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR04") (unit 1)
         )
@@ -8626,7 +8656,7 @@
     )
     (pin "1" (uuid 4c66e059-dd09-42b2-9a4a-9d36af00adcf))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0117") (unit 1)
         )
@@ -8651,7 +8681,7 @@
     )
     (pin "1" (uuid 9c6be95e-6673-4bed-a9bc-9edb0fbd65e1))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR053") (unit 1)
         )
@@ -8676,7 +8706,7 @@
     )
     (pin "1" (uuid 7a19e222-b47a-4806-8119-36f0543d0382))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR043") (unit 1)
         )
@@ -8702,7 +8732,7 @@
     (pin "1" (uuid abf468eb-cfcd-4bd6-a5ae-1cfa83f308b3))
     (pin "2" (uuid e20d6e6f-c795-4f6c-a193-bd473bcaba00))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R10") (unit 1)
         )
@@ -8728,7 +8758,7 @@
     (pin "1" (uuid 3a2e2965-4104-4e7d-ae73-098426615c57))
     (pin "2" (uuid 77704dd7-0449-4c83-854e-bdd88981ff0e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C7") (unit 1)
         )
@@ -8753,7 +8783,7 @@
     )
     (pin "1" (uuid 342a91a1-0bce-4023-bb97-ebb52dda51c7))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0112") (unit 1)
         )
@@ -8778,7 +8808,7 @@
     )
     (pin "1" (uuid a38b1f04-c110-4c6d-85b8-eb91a400ace5))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR038") (unit 1)
         )
@@ -8804,7 +8834,7 @@
     (pin "1" (uuid 96ded39d-5c21-4052-93c8-b771b7ad0f8c))
     (pin "2" (uuid f0fd7033-d234-459f-b6ce-b33a946030cf))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "SW2") (unit 1)
         )
@@ -8829,7 +8859,7 @@
     )
     (pin "1" (uuid 10485c9b-84ab-4fd6-9c55-ae59877f196f))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0106") (unit 1)
         )
@@ -8855,7 +8885,7 @@
     (pin "1" (uuid ce509048-2b05-495d-8108-d200ce81d240))
     (pin "2" (uuid bbd034af-0ee2-4f7a-be24-a1395acab0ff))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R1") (unit 1)
         )
@@ -8881,7 +8911,7 @@
     (pin "1" (uuid 0479f1f8-a50b-47c7-bf16-38a26640f000))
     (pin "2" (uuid d676b56d-4e61-4081-b033-c4be9b088e1a))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R11") (unit 1)
         )
@@ -8906,7 +8936,7 @@
     )
     (pin "1" (uuid 8bd32319-b20e-4c62-9349-6e69b7c14d51))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#FLG01") (unit 1)
         )
@@ -8937,7 +8967,7 @@
           (reference "C7") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C5") (unit 1)
         )
@@ -8967,7 +8997,7 @@
           (reference "#PWR0115") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR029") (unit 1)
         )
@@ -8993,7 +9023,7 @@
     (pin "1" (uuid dfd99656-7637-4c9b-bca2-3cbeb22e4cdb))
     (pin "2" (uuid ff1266ab-f0d5-447b-8fab-868b98f0e18d))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D1") (unit 1)
         )
@@ -9024,7 +9054,7 @@
           (reference "D11") (unit 1)
         )
       )
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "D4") (unit 1)
         )
@@ -9057,7 +9087,7 @@
     (pin "8" (uuid 99440acb-4ba1-462b-9544-55c9e829d618))
     (pin "9" (uuid a03bc8c2-d07f-4298-b6a0-3184112a1d88))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "U9") (unit 1)
         )
@@ -9083,7 +9113,7 @@
     (pin "1" (uuid fd3ad687-ef93-4a44-b815-faaa6b684352))
     (pin "2" (uuid c368d169-afab-4396-9b7c-38d44de8741e))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R7") (unit 1)
         )
@@ -9108,7 +9138,7 @@
     )
     (pin "1" (uuid 07e3c096-28fd-4b5e-9e06-b7ac66f7abb9))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR034") (unit 1)
         )
@@ -9134,7 +9164,7 @@
     (pin "1" (uuid 47196432-cf32-4404-9347-ed2b8ef578be))
     (pin "2" (uuid 57769cbb-e2bc-45d4-a985-15ff1abef8e9))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "R13") (unit 1)
         )
@@ -9159,7 +9189,7 @@
     )
     (pin "1" (uuid 58b9daa3-8bb0-40a8-b735-1d88030bb6eb))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR027") (unit 1)
         )
@@ -9184,7 +9214,7 @@
     )
     (pin "1" (uuid 3cab3fd6-7c22-4f6a-b1e4-2ee4b1bfde69))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR0125") (unit 1)
         )
@@ -9209,7 +9239,7 @@
     )
     (pin "1" (uuid 5a803102-9457-48ba-89cc-92d27f808ef4))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR058") (unit 1)
         )
@@ -9235,7 +9265,7 @@
     (pin "1" (uuid bec19f6c-6bd3-4c37-a24c-ba7ee83314ca))
     (pin "2" (uuid d0f7dd66-e11a-4d58-8f33-ec20e7d64c25))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "C1") (unit 1)
         )
@@ -9260,7 +9290,7 @@
     )
     (pin "1" (uuid 195a3af0-f7e0-4702-a346-01e3be0bfadd))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR041") (unit 1)
         )
@@ -9285,7 +9315,7 @@
     )
     (pin "1" (uuid 48f5e706-5460-460f-bb5c-d989bef5853b))
     (instances
-      (project "FC Control board 1.3"
+      (project "FC Control board 2.0"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
           (reference "#PWR059") (unit 1)
         )
