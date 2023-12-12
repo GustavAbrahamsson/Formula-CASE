@@ -31,10 +31,11 @@
 #define M4_REV_PIN 42
 
 // Assigned PWM channels
-#define M1_ASS_PWM_CHL 0
-#define M2_ASS_PWM_CHL 2
+#define SERVO_CHL 0
+#define M1_ASS_PWM_CHL 2
+#define M2_ASS_PWM_CHL 3
 #define M3_ASS_PWM_CHL 4
-#define M4_ASS_PWM_CHL 6 
+#define M4_ASS_PWM_CHL 5 
 
 // Motor sense pins ADC
 #define M1_SENSE_PIN 1
@@ -52,7 +53,7 @@
 uint8_t servo_channel;
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   // servo.setPeriodHertz(50);
 	// servo_channel = servo.attach(SERVO_PIN, 925, 1925);
   // servo.write(90);
@@ -94,34 +95,70 @@ void setup() {
   
   ledcDetachPin(SERVO_PIN);
 
+  delay(500);
 
-  // digitalWrite(M1_FWR_PIN, 0);
-  // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-  // ledcAttachPin(M1_FWR_PIN, M1_ASS_PWM_CHL);
+  // Front right forward direction works, with M1_ASS_PWM_CHL = 2
+  digitalWrite(M1_FWR_PIN, 0);
+  ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M1_FWR_PIN, M1_ASS_PWM_CHL);
 
-  digitalWrite(M2_FWR_PIN, 0);
+  // // Rear right forward direction works, with M2_ASS_PWM_CHL = 2
+  digitalWrite(M2_REV_PIN, 0);
   ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-  ledcAttachPin(M2_REV_PIN, M2_ASS_PWM_CHL);
+  ledcAttachPin(M2_FWR_PIN, M2_ASS_PWM_CHL);
   
-  // digitalWrite(M3_REV_PIN, 0);
-  // ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-  // ledcAttachPin(M3_FWR_PIN, M3_ASS_PWM_CHL);
+  // Front left forward direction works, with M3_ASS_PWM_CHL = 2
+  digitalWrite(M3_REV_PIN, 0);
+  ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M3_FWR_PIN, M3_ASS_PWM_CHL);
 
-  digitalWrite(M4_FWR_PIN, 0);
+  // Rear left forward direction works, with M4_ASS_PWM_CHL = 6
+  digitalWrite(M4_REV_PIN, 0);
   ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-  ledcAttachPin(M4_REV_PIN, M4_ASS_PWM_CHL);
-
-  // ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M4_FWR_PIN, M4_ASS_PWM_CHL);
 
 }
 
 void loop() {
-  Serial.println("T > 0");
-  ledcWrite(M4_ASS_PWM_CHL, 100);
-  delay(5000);
-  Serial.println("T = 0\n");
-  ledcWrite(M4_ASS_PWM_CHL, 0);
+  int channel1 = M1_ASS_PWM_CHL;
+  int channel2 = M2_ASS_PWM_CHL;
+  int channel3 = M3_ASS_PWM_CHL;
+  int channel4 = M4_ASS_PWM_CHL;
+
   delay(2000);
+  
+  // Serial.println("T > 0");
+  // ledcWrite(channel1, 50);
+  // ledcWrite(channel2, 50);
+  // delay(2000);
+  // Serial.println("T = 0\n");
+  // ledcWrite(channel1, 0);
+  // ledcWrite(channel2, 0);
+  // delay(2000);
+
+  while(1){
+    //Serial.println("T > 0");
+    ledcWrite(channel1, 100);
+    delay(10);
+    ledcWrite(channel2, 100);
+    delay(10);
+    ledcWrite(channel3, 100);
+    delay(10);
+    ledcWrite(channel4, 100);
+    delay(2000);
+    //Serial.println("T = 0\n");
+    ledcWrite(channel1, 0);
+    delay(10);
+    ledcWrite(channel2, 0);
+    delay(10);
+    ledcWrite(channel3, 0);
+    delay(10);
+    ledcWrite(channel4, 0);
+    delay(4000);
+
+  }
+  
+
 
 
 
