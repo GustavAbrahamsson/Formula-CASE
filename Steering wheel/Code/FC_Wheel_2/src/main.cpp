@@ -23,6 +23,92 @@
 // MPU6050 IMU
 #include <MPU6050_tockn.h>
 
+#include "esp_now.h"
+#include "Wifi.h"
+
+// Wheel 2.0 MAC: 34:85:18:5C:86:A0
+uint8_t wheel_address[] = {0x34, 0x85, 0x18, 0x5C, 0x86, 0xA0};
+
+// Car MAC: 30:30:F9:6F:DF:20
+uint8_t car_address[] = {0x30, 0x30, 0xF9, 0x6F, 0xDF, 0x20};
+
+typedef struct wheel_to_car_msg {
+    uint8_t throttle;
+    uint8_t brake;
+    float angle;
+} wheel_to_car_msg;
+
+typedef struct car_to_wheel_msg {
+    uint8_t throttle;
+    uint8_t brake;
+    float angle;
+} car_to_wheel_msg;
+
+
+car_to_wheel_msg incoming_message;
+
+wheel_to_car_msg outgoing_message;
+
+esp_now_peer_info_t peerInfo;
+String success;
+// Callback when data is sent
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  if (status ==0){
+    success = "Delivery Success :)";
+  }
+  else{
+    success = "Delivery Fail :(";
+  }
+}
+
+uint8_t wheel_throttle;
+uint8_t wheel_brake;
+float wheel_angle_deg;
+
+// Callback when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&incoming_message, incomingData, sizeof(incoming_message));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+  // wheel_throttle = incoming_message.throttle;
+  // wheel_brake = incoming_message.brake;
+  // wheel_angle_deg = incoming_message.angle;
+}
+  
+
+void init_esp_now(){
+  // Set device as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
+
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  // Once ESPNow is successfully Init, we will register for Send CB to
+  // get the status of Trasnmitted packet
+  esp_now_register_send_cb(OnDataSent);
+  
+  // Register peer
+  memcpy(peerInfo.peer_addr, car_address, 6);
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
+  
+  // Add peer        
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+  // Register for a callback function that will be called when data is received
+  esp_now_register_recv_cb(OnDataRecv);
+  Serial.println("ESP_NOW initialized");
+}
+
+
+
 
 void buzz1(uint16_t freq){
   ledcWriteTone(BZR_1_CHANNEL, freq);
@@ -146,8 +232,6 @@ void trigger_task(void *pvParameter){
   
   float value_interval = 1000;
 
-
-
   while(1){
     xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
 
@@ -174,17 +258,22 @@ void trigger_task(void *pvParameter){
     throttle_trigger.current_val = low_pass_filter(throttle_trigger.measurement, throttle_trigger.old_val, TRIG_LP_ALPHA);
     brake_trigger.current_val = low_pass_filter(brake_trigger.measurement, brake_trigger.old_val, TRIG_LP_ALPHA);
 
-    Serial.print(throttle_trigger.measurement); Serial.print("\t");
-    Serial.print(brake_trigger.measurement); Serial.print("\t");
+    wheel_throttle = constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
+    wheel_brake = constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
+
+
+
+    // Serial.print(throttle_trigger.measurement); Serial.print("\t");
+    // Serial.print(brake_trigger.measurement); Serial.print("\t");
 
     disp.throttle(constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255));
     disp.brake(constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255));
 
-    Serial.print(throttle_trigger.current_val); Serial.print("\t");
-    Serial.print(brake_trigger.current_val); Serial.print("\t");
+    // Serial.print(throttle_trigger.current_val); Serial.print("\t");
+    // Serial.print(brake_trigger.current_val); Serial.print("\t");
     
-    Serial.print(constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.print("\t");
-    Serial.print(constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.println("\t");
+    // Serial.print(constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.print("\t");
+    // Serial.print(constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255)); Serial.println("\t");
 
     // if(brake_trigger.measurement > throttle_trigger.current_val){
     //   temp_val = brake_trigger.measurement;
@@ -213,7 +302,13 @@ void imu_task(void *pvParameter){
     // Read from the sensor
     imu.update();
 
-    wheel_angle = imu.getAngleZ();
+    wheel_angle_deg = imu.getAngleZ();
+
+    outgoing_message.throttle = wheel_throttle;
+    outgoing_message.brake = wheel_brake;
+    outgoing_message.angle = wheel_angle_deg;
+    
+    esp_err_t result = esp_now_send(car_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
 
     //Serial.print(wheel_angle); Serial.println("\t");
   }
@@ -231,7 +326,7 @@ void init_tasks(){
 void setup(void)
 {
   setup_pins();
-  beep_beep();
+  //beep_beep();
   Serial.begin(115200);
   delay(100);
   
@@ -259,6 +354,8 @@ void setup(void)
   }
   //}
 
+  init_esp_now();
+
   tlc.reset_LEDs();
   tlc.ramp_init(0);
 
@@ -268,12 +365,14 @@ void setup(void)
 
 void loop()
 {
+  //delay(5000);
   while(1){
     //Serial.println("acc: "+String(imu.get_acc().x)+", "+String(imu.get_acc().y)+", "+String(imu.get_acc().z));
     //Serial.println("gyr: "+String(imu.get_gyr().x)+", "+String(imu.get_gyr().y)+", "+String(imu.get_gyr().z));
     //Serial.println();
 
-    vTaskDelay(10000 / portTICK_RATE_MS);
+
+    vTaskDelay(100000 / portTICK_RATE_MS);
   }
 
   // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);

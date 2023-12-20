@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "FC_library")(type "KiCad")(uri "${KIPRJMOD}/FC_library.kicad_sym")(options "")(descr ""))
   (lib (name "INA4181A3IPWR")(type "KiCad")(uri "${KIPRJMOD}/syms/INA4181A3IPWR.kicad_sym")(options "")(descr ""))
+  (lib (name "LTV-247")(type "Legacy")(uri "C:/Users/gusta/Downloads/LIB_LTV-247/LTV-247/KiCad/LTV-247.lib")(options "")(descr ""))
 )

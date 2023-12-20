@@ -1,4 +1,4 @@
-17004442886475
+20429906756540
 FC_footprint_library
 1043_18650_Li-ion
 
@@ -21,6 +21,13 @@ ESP32-S3-WROOM-1-N8
 41
 41
 FC_footprint_library
+HPZRC8V8QX
+HPZR-C8V8-QX-1
+Diode
+0
+2
+2
+FC_footprint_library
 LSM6DSM
 LGA, 14 Pin (https://www.st.com/resource/en/datasheet/lsm6ds3tr-c.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
 LGA NoLead
@@ -34,6 +41,13 @@ LSS12-P-V-B
 0
 3
 3
+FC_footprint_library
+PDZVTR36B
+PDZVTR3.6B-2
+Zener Diode
+0
+2
+2
 FC_footprint_library
 SOP65P640X120-20N
 
