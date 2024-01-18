@@ -3,26 +3,27 @@
 #include <Arduino.h>
 
 // Motor pins
+#define M4_FWR_PIN 14 // 0
+#define M4_REV_PIN 36 // 0
 #define M1_FWR_PIN 37
 #define M1_REV_PIN 38
-#define M2_FWR_PIN 35
-#define M2_REV_PIN 36
-#define M3_FWR_PIN 39
-#define M3_REV_PIN 40
-#define M4_FWR_PIN 41
-#define M4_REV_PIN 42
+#define M2_FWR_PIN 39
+#define M2_REV_PIN 40
+#define M3_FWR_PIN 41
+#define M3_REV_PIN 42
 
 // Assigned PWM channels
-#define M1_ASS_PWM_CHL 1
-#define M2_ASS_PWM_CHL 2
-#define M3_ASS_PWM_CHL 3
-#define M4_ASS_PWM_CHL 4 
+//#define SERVO_CHL 0
+#define M1_ASS_PWM_CHL 2
+#define M2_ASS_PWM_CHL 3
+#define M3_ASS_PWM_CHL 4
+#define M4_ASS_PWM_CHL 5 
 
 // Motor sense pins ADC
-#define M1_SENSE_PIN 1
-#define M2_SENSE_PIN 2
-#define M3_SENSE_PIN 3
-#define M4_SENSE_PIN 4
+#define M4_SENSE_PIN 15 // 0
+#define M1_SENSE_PIN 16
+#define M2_SENSE_PIN 17
+#define M3_SENSE_PIN 18
 
 #define MOTOR_PWM_BIT_RES 8
 #define MOTOR_PWM_FREQ 25000

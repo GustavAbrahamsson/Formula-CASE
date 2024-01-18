@@ -49,7 +49,7 @@
 #define TRIGGER_TASK_FREQ 50 // Hz
 #define TRIGGER_TASK_CORE 0
 
-#define IMU_TASK_FREQ 10 // Hz
+#define IMU_TASK_FREQ 100 // Hz
 #define IMU_TASK_CORE 1
 
 // General constants

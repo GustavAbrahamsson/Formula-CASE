@@ -29,8 +29,8 @@
 // Wheel 2.0 MAC: 34:85:18:5C:86:A0
 uint8_t wheel_address[] = {0x34, 0x85, 0x18, 0x5C, 0x86, 0xA0};
 
-// Car MAC: 30:30:F9:6F:DF:20
-uint8_t car_address[] = {0x30, 0x30, 0xF9, 0x6F, 0xDF, 0x20};
+// Car MAC: 0x34, 0x85, 0x18, 0x89, 0xE0, 0xA8
+uint8_t car_address[] = {0x34, 0x85, 0x18, 0x89, 0xE0, 0xA8};
 
 typedef struct wheel_to_car_msg {
     uint8_t throttle;
@@ -187,40 +187,11 @@ void debounce_input(Peripheral_Digital<Func>* input){
         input->input_streak = 1;
       }
       //Serial.println("Num same: " + String(input->input_streak));
-    }
-
-    input->last_val = input->raw_val;
-}
 
 // The task that handles reading digital inputs
 void button_task(void *pvParameter){
 
-  TickType_t xLastWakeTime;
-  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / BUTTON_TASK_FREQ);
-  BaseType_t xWasDelayed;
-  // Initialise the xLastWakeTime variable with the current time.
-  xLastWakeTime = xTaskGetTickCount();
-  bool debounce_paddle_R = false;
-  bool last_paddle_R = false;
-  uint16_t num_same_paddle_R = 1;
-
-  bool debounce_paddle_L = false;
-  uint16_t num_same_paddle_L = 1;
-
-  while(1){
-    // Wait for the next cycle.
-    xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
-    // xWasDelayed value can be used to determine whether a deadline was missed
-    // if the code here took too long.
-    
-    Paddle_R.raw_val = digitalRead(R_PADDLE_PIN);
-    Paddle_L.raw_val = digitalRead(L_PADDLE_PIN);
-
-    disp.battery_SoC(read_battery_voltage());
-
-    debounce_input(&Paddle_R);
-    debounce_input(&Paddle_L);
-  }
+  void *pvParameter
 }
 
 // The task that handles reading analog inputs

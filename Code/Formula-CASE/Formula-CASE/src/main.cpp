@@ -7,8 +7,8 @@
 // Wheel 2.0 MAC: 34:85:18:5C:86:A0
 uint8_t wheel_address[] = {0x34, 0x85, 0x18, 0x5C, 0x86, 0xA0};
 
-// Car MAC: 30:30:F9:6F:DF:20
-uint8_t car_address[] = {0x30, 0x30, 0xF9, 0x6F, 0xDF, 0x20};
+// Car MAC: 0x34, 0x85, 0x18, 0x89, 0xE0, 0xA8
+uint8_t car_address[] = {0x34, 0x85, 0x18, 0x89, 0xE0, 0xA8};
 
 typedef struct wheel_to_car_msg {
     uint8_t throttle;
@@ -23,70 +23,52 @@ typedef struct car_to_wheel_msg {
 } car_to_wheel_msg;
 
 // ADC pins
+#define HALL_EFF_4_PIN 4  // 0
 #define HALL_EFF_1_PIN 5
 #define HALL_EFF_2_PIN 6
 #define HALL_EFF_3_PIN 7
-#define HALL_EFF_4_PIN 8
 
-#define BAT_SENSE_PIN 9
+#define BAT_SENSE_PIN 21
 
-// Motor sense pins ADC
-#define M4_SENSE_PIN 4
-#define M3_SENSE_PIN 3
-#define M2_SENSE_PIN 2
-#define M1_SENSE_PIN 1
-
-// // Front right forward direction works, with M1_ASS_PWM_CHL = 2
-//   digitalWrite(M1_FWR_PIN, 0);
-//   ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-//   ledcAttachPin(M1_FWR_PIN, M1_ASS_PWM_CHL);
-
-//   // // Rear right forward direction works, with M2_ASS_PWM_CHL = 2
-//   digitalWrite(M2_REV_PIN, 0);
-//   ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-//   ledcAttachPin(M2_FWR_PIN, M2_ASS_PWM_CHL);
-  
-//   // Front left forward direction works, with M3_ASS_PWM_CHL = 2
-//   digitalWrite(M3_REV_PIN, 0);
-//   ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-//   ledcAttachPin(M3_FWR_PIN, M3_ASS_PWM_CHL);
-
-//   // Rear left forward direction works, with M4_ASS_PWM_CHL = 6
-//   digitalWrite(M4_REV_PIN, 0);
-//   ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-//   ledcAttachPin(M4_FWR_PIN, M4_ASS_PWM_CHL);
-
-
+// Motor direction pins
+#define M0_DIR_PIN 10
+#define M1_DIR_PIN 11
+#define M2_DIR_PIN 12
+#define M3_DIR_PIN 13
 
 // Servo pins
-#define SERVO_PIN 15
+#define SERVO_PIN 1
 
 #define SERVO_DEFLECTION 50 // deg
 
+#define M0_FWR_PIN 14 // 0
+#define M0_REV_PIN 36 // 0
 #define M1_FWR_PIN 37
 #define M1_REV_PIN 38
-#define M2_FWR_PIN 35
-#define M2_REV_PIN 36
-#define M3_FWR_PIN 39
-#define M3_REV_PIN 40
-#define M4_FWR_PIN 41
-#define M4_REV_PIN 42
+#define M2_FWR_PIN 39
+#define M2_REV_PIN 40
+#define M3_FWR_PIN 41
+#define M3_REV_PIN 42
 
 // Assigned PWM channels
 #define SERVO_CHL 0
 #define M1_ASS_PWM_CHL 2
 #define M2_ASS_PWM_CHL 3
 #define M3_ASS_PWM_CHL 4
-#define M4_ASS_PWM_CHL 5 
+#define M0_ASS_PWM_CHL 5 
 
 // Motor sense pins ADC
-#define M1_SENSE_PIN 1
-#define M2_SENSE_PIN 2
-#define M3_SENSE_PIN 3
-#define M4_SENSE_PIN 4
+#define M0_SENSE_PIN 15 // 0
+#define M1_SENSE_PIN 16
+#define M2_SENSE_PIN 17
+#define M3_SENSE_PIN 18
 
 #define MOTOR_PWM_BIT_RES 8
 #define MOTOR_PWM_FREQ 25000
+
+// Tasks
+#define MOTOR_TASK_FREQ 10 // Hz
+#define MOTOR_TASK_CORE 0
 
 wheel_to_car_msg incoming_message;
 
@@ -119,26 +101,6 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   wheel_throttle = incoming_message.throttle;
   wheel_brake = incoming_message.brake;
   wheel_angle = incoming_message.angle;
-
-  servo.write(int(90 - constrain(wheel_angle * 50.0/90.0, -50.0, 50.0)));
-  
-  if(wheel_throttle > 20){
-    ledcWrite(M2_ASS_PWM_CHL, wheel_throttle);
-    ledcWrite(M4_ASS_PWM_CHL, wheel_throttle);
-  }
-  else{
-    ledcWrite(M2_ASS_PWM_CHL, 0);
-    ledcWrite(M4_ASS_PWM_CHL, 0);
-  }
-
-  if(wheel_brake > 20){
-    ledcWrite(M1_ASS_PWM_CHL, wheel_brake);
-    ledcWrite(M3_ASS_PWM_CHL, wheel_brake);
-  }
-  else{
-    ledcWrite(M1_ASS_PWM_CHL, 0);
-    ledcWrite(M3_ASS_PWM_CHL, 0);
-  }
 }
   
 
@@ -171,10 +133,65 @@ void init_esp_now(){
   Serial.println("ESP_NOW initialized");
 }
 
+// The task that finally applies new motor voltages and servo position
+void motor_task(void *pvParameter){
+
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / MOTOR_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  // Initialise the xLastWakeTime variable with the current time.
+  xLastWakeTime = xTaskGetTickCount();
+  bool debounce_paddle_R = false;
+  bool last_paddle_R = false;
+  uint16_t num_same_paddle_R = 1;
+
+  bool debounce_paddle_L = false;
+  uint16_t num_same_paddle_L = 1;
+
+  while(1){
+    // Wait for the next cycle.
+    xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
+    // xWasDelayed value can be used to determine whether a deadline was missed
+    // if the code here took too long.
+    
+    servo.write(int(90 - constrain(wheel_angle * 50.0/90.0, -50.0, 50.0)));
+  
+    if(wheel_throttle > 10){
+      // Temp
+      wheel_throttle = wheel_throttle * 0.5;
+      constrain(wheel_throttle,0,25);
+
+      ledcWrite(M2_ASS_PWM_CHL, wheel_throttle);
+      ledcWrite(M3_ASS_PWM_CHL, wheel_throttle);
+    }
+    else{
+      ledcWrite(M2_ASS_PWM_CHL, 0);
+      ledcWrite(M3_ASS_PWM_CHL, 0);
+    }
+
+    if(wheel_brake > 10){
+      // Temp
+      wheel_brake = wheel_brake * 0.5;
+      constrain(wheel_brake,0,25);
+      ledcWrite(M1_ASS_PWM_CHL, wheel_brake);
+      ledcWrite(M0_ASS_PWM_CHL, wheel_brake);
+    }
+    else{
+      ledcWrite(M1_ASS_PWM_CHL, 0);
+      ledcWrite(M0_ASS_PWM_CHL, 0);
+    }
+  }
+
+}
+
 
 // Motor_controller motor_controller = Motor_controller();
 
 uint8_t servo_channel;
+
+void init_tasks(){
+  xTaskCreatePinnedToCore(motor_task, "motor_task", 2048, NULL, 1, NULL, MOTOR_TASK_CORE);
+}
 
 void setup() {
   Serial.begin(115200);
@@ -183,23 +200,33 @@ void setup() {
   servo.write(90);
 
 
+  pinMode(M0_FWR_PIN, OUTPUT);
+  pinMode(M0_REV_PIN, OUTPUT);
   pinMode(M1_FWR_PIN, OUTPUT);
   pinMode(M1_REV_PIN, OUTPUT);
   pinMode(M2_FWR_PIN, OUTPUT);
   pinMode(M2_REV_PIN, OUTPUT);
   pinMode(M3_FWR_PIN, OUTPUT);
   pinMode(M3_REV_PIN, OUTPUT);
-  pinMode(M4_FWR_PIN, OUTPUT);
-  pinMode(M4_REV_PIN, OUTPUT);
 
+  pinMode(M0_DIR_PIN, OUTPUT);
+  pinMode(M1_DIR_PIN, OUTPUT);
+  pinMode(M2_DIR_PIN, OUTPUT);
+  pinMode(M3_DIR_PIN, OUTPUT);
+
+  digitalWrite(M0_FWR_PIN, 0);
+  digitalWrite(M0_REV_PIN, 0);
   digitalWrite(M1_FWR_PIN, 0);
   digitalWrite(M1_REV_PIN, 0);
   digitalWrite(M2_FWR_PIN, 0);
   digitalWrite(M2_REV_PIN, 0);
   digitalWrite(M3_FWR_PIN, 0);
   digitalWrite(M3_REV_PIN, 0);
-  digitalWrite(M4_FWR_PIN, 0);
-  digitalWrite(M4_REV_PIN, 0);
+
+  digitalWrite(M0_DIR_PIN, 1);
+  digitalWrite(M1_DIR_PIN, 0);
+  digitalWrite(M2_DIR_PIN, 0);
+  digitalWrite(M3_DIR_PIN, 0);
 
 
   delay(3000);
@@ -217,47 +244,56 @@ void setup() {
   ledcDetachPin(M2_REV_PIN);
   ledcDetachPin(M3_FWR_PIN);
   ledcDetachPin(M3_REV_PIN);
-  ledcDetachPin(M4_FWR_PIN);
-  ledcDetachPin(M4_REV_PIN);
+  ledcDetachPin(M0_FWR_PIN);
+  ledcDetachPin(M0_REV_PIN);
   
   //ledcDetachPin(SERVO_PIN);
 
   delay(500);
 
-  // Front right forward direction works, with M1_ASS_PWM_CHL = 2
+  digitalWrite(M0_REV_PIN, 0);
+  ledcSetup(M0_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
+  ledcAttachPin(M0_FWR_PIN, M0_ASS_PWM_CHL);
+  
   digitalWrite(M1_FWR_PIN, 0);
   ledcSetup(M1_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
   ledcAttachPin(M1_REV_PIN, M1_ASS_PWM_CHL);
 
-  // // Rear right forward direction works, with M2_ASS_PWM_CHL = 2
   digitalWrite(M2_REV_PIN, 0);
   ledcSetup(M2_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
   ledcAttachPin(M2_FWR_PIN, M2_ASS_PWM_CHL);
   
-  // Front left forward direction works, with M3_ASS_PWM_CHL = 2
-  digitalWrite(M3_REV_PIN, 0);
+  digitalWrite(M3_FWR_PIN, 0);
   ledcSetup(M3_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
   ledcAttachPin(M3_REV_PIN, M3_ASS_PWM_CHL);
 
-  // Rear left forward direction works, with M4_ASS_PWM_CHL = 6
-  digitalWrite(M4_REV_PIN, 0);
-  ledcSetup(M4_ASS_PWM_CHL, MOTOR_PWM_FREQ, MOTOR_PWM_BIT_RES);
-  ledcAttachPin(M4_FWR_PIN, M4_ASS_PWM_CHL);
 
+  ledcWrite(M0_FWR_PIN, 0);
   ledcWrite(M1_FWR_PIN, 0);
   ledcWrite(M2_FWR_PIN, 0);
   ledcWrite(M3_FWR_PIN, 0);
-  ledcWrite(M4_FWR_PIN, 0);
+
+  delay(250);
+
+  // Start the tasks
+  init_tasks();
 
 }
 
 void loop() {
+
+  while(1){
+    vTaskDelay(1000000 / portTICK_RATE_MS);
+  }
+
+
+
   // int channel1 = M1_ASS_PWM_CHL;
   // int channel2 = M2_ASS_PWM_CHL;
   // int channel3 = M3_ASS_PWM_CHL;
-  // int channel4 = M4_ASS_PWM_CHL;
+  // int channel4 = M0_ASS_PWM_CHL;
   
-  delay(10000);
+  
   
   // Serial.println("T > 0");
   // ledcWrite(channel1, 50);
@@ -448,3 +484,24 @@ void loop() {
   // delay(4000);
   
 
+// ------------------------------- MAC ADDRESS ---------------------------
+
+// #include <Wire.h>
+
+// #ifdef ESP32
+//   #include <WiFi.h>
+// #else
+//   #include <ESP8266WiFi.h>
+// #endif
+
+// void setup(){
+//   Serial.begin(115200);
+//   Serial.println();
+//   delay(2000);
+//   Serial.print("ESP Board MAC Address:  ");
+//   Serial.println(WiFi.macAddress());
+// }
+ 
+// void loop(){
+
+// }
