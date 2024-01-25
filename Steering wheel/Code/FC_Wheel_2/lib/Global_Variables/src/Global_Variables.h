@@ -43,13 +43,13 @@
 #define IMU_HP_FILTER MPU6050_HIGHPASS_5_HZ
 
 // Task frequencies
-#define BUTTON_TASK_FREQ 50 // Hz
+#define BUTTON_TASK_FREQ 100 // Hz
 #define BUTTON_TASK_CORE 0 // 0 or 1
 
 #define TRIGGER_TASK_FREQ 50 // Hz
 #define TRIGGER_TASK_CORE 0
 
-#define IMU_TASK_FREQ 100 // Hz
+#define IMU_TASK_FREQ 25 // Hz
 #define IMU_TASK_CORE 1
 
 // General constants
@@ -59,7 +59,7 @@ extern const float battery_voltage_coeff;
 
 #define GEAR_INDEX_MAX 8
 
-#define TRIG_LP_ALPHA 0.4 // LP-filter alpha for the throttle and brake
+#define TRIG_LP_ALPHA 0.3 // LP-filter alpha for the throttle and brake
 
 // 15-LED array object
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V

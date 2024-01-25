@@ -187,11 +187,40 @@ void debounce_input(Peripheral_Digital<Func>* input){
         input->input_streak = 1;
       }
       //Serial.println("Num same: " + String(input->input_streak));
+    }
+
+    input->last_val = input->raw_val;
+}
 
 // The task that handles reading digital inputs
 void button_task(void *pvParameter){
 
-  void *pvParameter
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / BUTTON_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  // Initialise the xLastWakeTime variable with the current time.
+  xLastWakeTime = xTaskGetTickCount();
+  bool debounce_paddle_R = false;
+  bool last_paddle_R = false;
+  uint16_t num_same_paddle_R = 1;
+
+  bool debounce_paddle_L = false;
+  uint16_t num_same_paddle_L = 1;
+
+  while(1){
+    // Wait for the next cycle.
+    xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
+    // xWasDelayed value can be used to determine whether a deadline was missed
+    // if the code here took too long.
+    
+    Paddle_R.raw_val = digitalRead(R_PADDLE_PIN);
+    Paddle_L.raw_val = digitalRead(L_PADDLE_PIN);
+
+    //disp.battery_SoC(read_battery_voltage());
+
+    debounce_input(&Paddle_R);
+    debounce_input(&Paddle_L);
+  }
 }
 
 // The task that handles reading analog inputs
@@ -230,8 +259,13 @@ void trigger_task(void *pvParameter){
     brake_trigger.current_val = low_pass_filter(brake_trigger.measurement, brake_trigger.old_val, TRIG_LP_ALPHA);
 
     wheel_throttle = constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
+    if(wheel_throttle < 0.1 * 255) {
+      wheel_throttle = 0;
+    }
     wheel_brake = constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
-
+    if(wheel_brake < 0.1 * 255) {
+      wheel_brake = 0;
+    }
 
 
     // Serial.print(throttle_trigger.measurement); Serial.print("\t");
@@ -298,7 +332,7 @@ void setup(void)
 {
   setup_pins();
   //beep_beep();
-  Serial.begin(115200);
+  //Serial.begin(115200);
   delay(100);
   
   // Init LED array
@@ -343,7 +377,7 @@ void loop()
     //Serial.println();
 
 
-    vTaskDelay(100000 / portTICK_RATE_MS);
+    vTaskDelay(1000000 / portTICK_RATE_MS);
   }
 
   // tft_display.setCursor(SCREEN_WIDTH_FC / 2 + 60, 25);

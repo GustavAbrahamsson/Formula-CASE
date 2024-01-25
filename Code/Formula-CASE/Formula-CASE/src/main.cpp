@@ -67,8 +67,8 @@ typedef struct car_to_wheel_msg {
 #define MOTOR_PWM_FREQ 25000
 
 // Tasks
-#define MOTOR_TASK_FREQ 10 // Hz
-#define MOTOR_TASK_CORE 0
+#define MOTOR_TASK_FREQ 50 // Hz
+#define MOTOR_TASK_CORE 1
 
 wheel_to_car_msg incoming_message;
 
@@ -98,9 +98,6 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming_message, incomingData, sizeof(incoming_message));
   Serial.print("Bytes received: ");
   Serial.println(len);
-  wheel_throttle = incoming_message.throttle;
-  wheel_brake = incoming_message.brake;
-  wheel_angle = incoming_message.angle;
 }
   
 
@@ -154,15 +151,17 @@ void motor_task(void *pvParameter){
     // xWasDelayed value can be used to determine whether a deadline was missed
     // if the code here took too long.
     
+    wheel_throttle = incoming_message.throttle;
+    wheel_brake = incoming_message.brake;
+    wheel_angle = incoming_message.angle;
+
     servo.write(int(90 - constrain(wheel_angle * 50.0/90.0, -50.0, 50.0)));
   
     if(wheel_throttle > 10){
       // Temp
-      wheel_throttle = wheel_throttle * 0.5;
-      constrain(wheel_throttle,0,25);
 
-      ledcWrite(M2_ASS_PWM_CHL, wheel_throttle);
-      ledcWrite(M3_ASS_PWM_CHL, wheel_throttle);
+      ledcWrite(M2_ASS_PWM_CHL, wheel_throttle*0.1);
+      ledcWrite(M3_ASS_PWM_CHL, wheel_throttle*0.1);
     }
     else{
       ledcWrite(M2_ASS_PWM_CHL, 0);
@@ -171,10 +170,8 @@ void motor_task(void *pvParameter){
 
     if(wheel_brake > 10){
       // Temp
-      wheel_brake = wheel_brake * 0.5;
-      constrain(wheel_brake,0,25);
-      ledcWrite(M1_ASS_PWM_CHL, wheel_brake);
-      ledcWrite(M0_ASS_PWM_CHL, wheel_brake);
+      ledcWrite(M1_ASS_PWM_CHL, wheel_brake*0.1);
+      ledcWrite(M0_ASS_PWM_CHL, wheel_brake*0.1);
     }
     else{
       ledcWrite(M1_ASS_PWM_CHL, 0);
@@ -194,7 +191,7 @@ void init_tasks(){
 }
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   servo.setPeriodHertz(50);
 	servo_channel = servo.attach(SERVO_PIN, 925, 1925);
   servo.write(90);
