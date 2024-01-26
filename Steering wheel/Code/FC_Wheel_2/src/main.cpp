@@ -39,9 +39,8 @@ typedef struct wheel_to_car_msg {
 } wheel_to_car_msg;
 
 typedef struct car_to_wheel_msg {
-    uint8_t throttle;
-    uint8_t brake;
-    float angle;
+    float w_ICE; // RPM
+    float phi; // rad
 } car_to_wheel_msg;
 
 
@@ -53,8 +52,8 @@ esp_now_peer_info_t peerInfo;
 String success;
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("\r\nLast Packet Send Status:\t");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
   if (status ==0){
     success = "Delivery Success :)";
   }
@@ -70,11 +69,9 @@ float wheel_angle_deg;
 // Callback when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming_message, incomingData, sizeof(incoming_message));
-  Serial.print("Bytes received: ");
-  Serial.println(len);
-  // wheel_throttle = incoming_message.throttle;
-  // wheel_brake = incoming_message.brake;
-  // wheel_angle_deg = incoming_message.angle;
+  //Serial.print("Bytes received: ");
+  //Serial.println(len);
+  
 }
   
 
@@ -106,8 +103,6 @@ void init_esp_now(){
   esp_now_register_recv_cb(OnDataRecv);
   Serial.println("ESP_NOW initialized");
 }
-
-
 
 
 void buzz1(uint16_t freq){
@@ -315,7 +310,9 @@ void imu_task(void *pvParameter){
     
     esp_err_t result = esp_now_send(car_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
 
-    //Serial.print(wheel_angle); Serial.println("\t");
+    Serial.print(incoming_message.w_ICE); Serial.print("\t");
+    Serial.print(incoming_message.phi); Serial.print("\t");
+    Serial.println();
   }
 }
 
@@ -332,7 +329,7 @@ void setup(void)
 {
   setup_pins();
   //beep_beep();
-  //Serial.begin(115200);
+  Serial.begin(115200);
   delay(100);
   
   // Init LED array
