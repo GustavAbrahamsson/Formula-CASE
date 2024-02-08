@@ -1,4 +1,7 @@
 #include <Bluepad32.h>
+#include "WiFi.h"
+#include "esp_now.h"
+
 
 GamepadPtr myGamepads[BP32_MAX_GAMEPADS];
 
@@ -46,22 +49,23 @@ void onDisconnectedGamepad(GamepadPtr gp) {
 
 
 ////////////////////////////////////////
-#include "WiFi.h"
-#include "esp_now.h"
 
 // uint8_t broadcastAddress[] = {0x58, 0xBF, 0x25, 0x37, 0xF8, 0xC8};
-uint8_t broadcastAddress[] = {0x68, 0x67, 0x25, 0xAD, 0xDD, 0xD4};
+// uint8_t broadcastAddress[] = {0x68, 0x67, 0x25, 0xAD, 0xDD, 0xD4};
+uint8_t broadcastAddress[] = {0x34, 0x85, 0x18, 0x5C, 0x4E, 0xF0};
+
 
 // Structure example to send data
 // Must match the receiver structure
+
 typedef struct struct_message {
-  double a;
+  // axis data
+  int16_t axisX;
+  int16_t axisY;
+  int16_t axisRX;
+  int16_t axisRY;
 } struct_message;
 
-uint16_t i = 0;
-int loop_size = 1000;
-
-// Create a struct_message called myData
 struct_message myData;
 
 esp_now_peer_info_t peerInfo;
@@ -71,8 +75,6 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   // Serial.print("\r\nLast Packet Send Status:\t");
   // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
-
-
 
 
 
@@ -94,12 +96,6 @@ void setup() {
   // Forgetting Bluetooth keys prevents "paired" gamepads to reconnect.
   // But might also fix some connection / re-connection issues.
   BP32.forgetBluetoothKeys();
-
-
-
-
-
-
 
 
   WiFi.mode(WIFI_STA);
@@ -138,49 +134,6 @@ void loop() {
     GamepadPtr myGamepad = myGamepads[i];
 
     if (myGamepad && myGamepad->isConnected()) {
-      // There are different ways to query whether a button is pressed.
-      // By query each button individually:
-      //  a(), b(), x(), y(), l1(), etc...
-      if (myGamepad->a()) {
-        static int colorIdx = 0;
-        // Some gamepads like DS4 and DualSense support changing the color LED.
-        // It is possible to change it by calling:
-        switch (colorIdx % 3) {
-        case 0:
-          // Red
-          myGamepad->setColorLED(255, 0, 0);
-          break;
-        case 1:
-          // Green
-          myGamepad->setColorLED(0, 255, 0);
-          break;
-        case 2:
-          // Blue
-          myGamepad->setColorLED(0, 0, 255);
-          break;
-        }
-        colorIdx++;
-      }
-
-      if (myGamepad->b()) {
-        // Turn on the 4 LED. Each bit represents one LED.
-        static int led = 0;
-        led++;
-        // Some gamepads like the DS3, DualSense, Nintendo Wii, Nintendo Switch
-        // support changing the "Player LEDs": those 4 LEDs that usually
-        // indicate the "gamepad seat". It is possible to change them by
-        // calling:
-        myGamepad->setPlayerLEDs(led & 0x0f);
-      }
-
-      if (myGamepad->x()) {
-        // Duration: 255 is ~2 seconds
-        // force: intensity
-        // Some gamepads like DS3, DS4, DualSense, Switch, Xbox One S support
-        // rumble.
-        // It is possible to set it by calling:
-        myGamepad->setRumble(0xc0 /* force */, 0xc0 /* duration */);
-      }
 
       // Another way to query the buttons, is by calling buttons(), or
       // miscButtons() which return a bitmask.
@@ -198,40 +151,31 @@ void loop() {
           myGamepad->axisRY(),      // (-511 - 512) right Y axis
           myGamepad->brake(),       // (0 - 1023): brake button
           myGamepad->throttle(),    // (0 - 1023): throttle (AKA gas) button
-          myGamepad->miscButtons(), // bitmak of pressed "misc" buttons
-          myGamepad->gyroX(),       // Gyro X
-          myGamepad->gyroY(),       // Gyro Y
-          myGamepad->gyroZ(),       // Gyro Z
-          myGamepad->accelX(),      // Accelerometer X
-          myGamepad->accelY(),      // Accelerometer Y
-          myGamepad->accelZ()       // Accelerometer Z
+          myGamepad->miscButtons() // bitmak of pressed "misc" buttons
       );
 
-      // You can query the axis and other properties as well. See Gamepad.h
-      // For all the available functions.
+      myData.axisX = myGamepad->axisX();
+      myData.axisY = myGamepad->axisY();
+      myData.axisRX = myGamepad->axisRX();
+      myData.axisRY = myGamepad->axisRY();
+
+
+
     }
   }
 
-  myData.a = i;
-  i++;
+  
   
   // Send message via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
   if (result == ESP_OK) {
     // Serial.println("Sent with success");
-  }
+  } 
   else {
     // Serial.println("Error sending the data");
     Serial.println(result);
   }
-
-  if (i == loop_size) {
-    i = 0;
-    delay(1000);
-  }
-
-
 
 
   // The main loop must have some kind of "yield to lower priority task" event.
@@ -241,5 +185,5 @@ void loop() {
   // https://stackoverflow.com/questions/66278271/task-watchdog-got-triggered-the-tasks-did-not-reset-the-watchdog-in-time
 
   // vTaskDelay(1);
-  delay(150);
+  delay(50);
 }

@@ -55,51 +55,55 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void setup(){
   Serial.begin(115200);
   Serial.println("Starting");
-  WiFi.mode(WIFI_STA);
-  Serial.println("MAC: " + WiFi.macAddress());
+  // WiFi.mode(WIFI_STA);
+  // Serial.println("MAC: " + WiFi.macAddress());
 
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
-    return;
-  }
+  // if (esp_now_init() != ESP_OK) {
+  //   Serial.println("Error initializing ESP-NOW");
+  //   return;
+  // }
 
-  esp_now_register_send_cb(OnDataSent);
+  // esp_now_register_send_cb(OnDataSent);
 
-  // Register peer
-  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-  peerInfo.channel = 0; // pick a channel
-  peerInfo.encrypt = false;
+  // // Register peer
+  // memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  // peerInfo.channel = 0; // pick a channel
+  // peerInfo.encrypt = false;
 
-  // Add peer
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
+  // // Add peer
+  // if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+  //   Serial.println("Failed to add peer");
+  //   return;
+  // }
     
 }
 
 void loop() {
-  myData.a = i;
-  i++;
+  // myData.a = i;
+  // i++;
   
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+  // // Send message via ESP-NOW
+  // esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
-  if (result == ESP_OK) {
-    // Serial.println("Sent with success");
-  }
-  else {
-    // Serial.println("Error sending the data");
-    Serial.println(result);
-  }
+  // if (result == ESP_OK) {
+  //   // Serial.println("Sent with success");
+  // }
+  // else {
+  //   // Serial.println("Error sending the data");
+  //   Serial.println(result);
+  // }
 
-  if (i == loop_size) {
-    i = 0;
-    delay(1000);
-  }
-  // delay(2000);
-  delay(2);
-  // delayMicroseconds(1500);
+  // if (i == loop_size) {
+  //   i = 0;
+  //   delay(1000);
+  // }
+  // // delay(2000);
+  // delay(2);
+  // // delayMicroseconds(1500);
+
+
+  Serial.println("Hello World");
+  delay(1000);
 }
     
 

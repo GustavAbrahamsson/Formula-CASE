@@ -31,6 +31,16 @@ def get_joystick_values(joystick):
     # Mask out some axes
     return axes
 
+def setup_serial():
+    # Setup serial communication
+    ser = serial.Serial()
+    ser.baudrate = 115200
+    ser.port = 'COM5'
+    ser.open()
+    return ser
+
+ser = setup_serial()
+
 def send_joystick_serial(ser, values):
     # Values are float between -1 and 1
     # Convert to int between 0 and 512
@@ -41,6 +51,14 @@ def send_joystick_serial(ser, values):
     # ser.write(values)
     # Print values
     print(values)
+    ser.write(values[0])
+
+def read_serial(ser):
+    # Read serial
+    # ser.read()
+
+    # Print values
+    print(ser.read())
 
 
 # Display the joystick's state
@@ -64,7 +82,8 @@ while done == False:
 
     # Get joystick axes
     joystick_values = get_joystick_values(joysticks[0])
-    send_joystick_serial(None, joystick_values)
+    # send_joystick_serial(None, joystick_values)
+    # read_serial(ser)
 
     # Draw axes
     for i in range(len(joystick_values)):
