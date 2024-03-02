@@ -315,7 +315,7 @@ void init_imu(){
     delay(1000);
   }
   Serial.println("IMU initialized");
-  imu.enableDefault();
+  imu.enableDefault(); // TODO: Investigate how to get other resolutions
 }
 
 void init_tasks(){
@@ -411,7 +411,6 @@ uint8_t servo_channel;
 
 void setup() {
   Serial.begin(115200);
-  delay(5000);
   Serial.println("Car started");
 
   servo.setPeriodHertz(50);
