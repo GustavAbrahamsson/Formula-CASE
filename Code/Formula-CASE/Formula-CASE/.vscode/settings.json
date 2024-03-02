@@ -2,6 +2,7 @@
   "files.associations": {
     "random": "cpp",
     "limits": "cpp",
-    "cmath": "cpp"
+    "cmath": "cpp",
+    "*.tcc": "cpp"
   }
 }

@@ -4,8 +4,13 @@
 //#include "Motor_controller.h"
 #include <ESP32Servo.h>
 
+#include <Wire.h>
+#include <LSM6.h>
+
 // Global control variable for testing
 #define MOTORS_ALLOWED false
+
+LSM6 imu;
 
 // Wheel 2.0 MAC: 34:85:18:5C:86:A0
 uint8_t wheel_address[] = {0x34, 0x85, 0x18, 0x5C, 0x86, 0xA0};
@@ -109,8 +114,8 @@ esp_now_peer_info_t peerInfo;
 String success;
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  // Serial.print("\r\nLast Packet Send Status:\t");
+  // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
   if (status ==0){
     success = "Delivery Success :)";
   }
@@ -133,6 +138,10 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   //Serial.println(len);
 }
   
+// Play a certain frequency via buzzer
+void buzz_hz(uint16_t freq){
+  ledcWriteTone(BUZZER_CHNL, freq);
+}
 
 void init_esp_now(){
   // Set device as a Wi-Fi Station
@@ -208,10 +217,6 @@ void motor_task(void *pvParameter){
 
 }
 
-// Play a certain frequency via buzzer
-void buzz_hz(uint16_t freq){
-  ledcWriteTone(BUZZER_CHNL, freq);
-}
 
 
 // A peripheral task
@@ -229,7 +234,19 @@ void peripheral_task(void *pvParameter){
     // xWasDelayed value can be used to determine whether a deadline was missed
     // if the code here took too long.
     
-    buzz_hz(12 * m_meas[0].w_m + 1000);
+    //buzz_hz(12 * m_meas[0].w_m + 1000);
+    
+    imu.read();
+    
+    Serial.print(imu.a.x); Serial.print("\t");
+    Serial.print(imu.a.y); Serial.print("\t");
+    Serial.print(imu.a.z); Serial.print("\t");
+    
+    Serial.print(imu.g.x); Serial.print("\t");
+    Serial.print(imu.g.y); Serial.print("\t");
+    Serial.print(imu.g.z); Serial.print("\t");
+    
+    Serial.println();
 
     outgoing_message.w_ICE = m_meas[0].w_m;
     outgoing_message.phi = m_meas[0].phi;
@@ -286,6 +303,20 @@ void speed_measurement_task(void *pvParameter){
 
 
 // Motor_controller motor_controller = Motor_controller();
+
+void init_i2c(){
+  Wire.setPins(SDA, SCL);
+  Wire.begin();
+}
+
+void init_imu(){
+  while(!imu.init(LSM6::device_DS33, LSM6::sa0_low)){
+    Serial.println("Failed to initialize IMU!");
+    delay(1000);
+  }
+  Serial.println("IMU initialized");
+  imu.enableDefault();
+}
 
 void init_tasks(){
   xTaskCreatePinnedToCore(motor_task, "motor_task", 2048, NULL, 1, NULL, MOTOR_TASK_CORE);
@@ -376,16 +407,20 @@ void init_motors(){
   delay(250);
 }
 
-
 uint8_t servo_channel;
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
+  delay(5000);
+  Serial.println("Car started");
+
   servo.setPeriodHertz(50);
 	servo_channel = servo.attach(SERVO_PIN, 925, 1925);
   servo.write(90);
 
   init_pins();
+  init_i2c();
+  init_imu();
 
   delay(1000);
 
@@ -639,4 +674,60 @@ void loop() {
  
 // void loop(){
 
+// }
+
+
+// // I2C address scanner program
+// #include <Wire.h>
+// #include <Arduino.h>
+
+// void setup()
+// {
+//   Wire.setPins(8,9);
+//   Wire.begin();
+//   Serial.begin(115200);
+//   Serial.println("I2C Scanner");
+
+// }
+
+// void loop()
+// {
+//   byte error, address;
+//   int nDevices;
+
+//   Serial.println("Scanning...");
+
+//   nDevices = 0;
+//   for(address = 1; address < 127; address++ )
+//   {
+//     Wire.beginTransmission(address);
+//     error = Wire.endTransmission();
+
+//     if (error == 0)
+//     {
+//       Serial.print("I2C device found at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.print(address,HEX);
+//       Serial.println("  !");
+
+//       nDevices++;
+//     }
+//     else if (error==4)
+//     {
+//       Serial.print("Unknown error at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.println(address,HEX);
+//     }
+//   }
+
+//   if (nDevices == 0)
+//     Serial.println("No I2C devices found");
+//   else
+//     Serial.println("done");
+
+//   delay(5000); // wait 5 seconds for next scan
 // }
