@@ -1,16 +1,17 @@
 #include <Arduino.h>
 #include "esp_now.h"
 #include "WiFi.h"
-//#include "Motor_controller.h"
 #include <ESP32Servo.h>
 
 #include <Wire.h>
-#include <LSM6.h>
+
+//#include "Motor_controller.h"
+#include "LSM6D_IMU.h"
+
+LSM6D_IMU imu_LSM6D;
 
 // Global control variable for testing
 #define MOTORS_ALLOWED false
-
-LSM6 imu;
 
 // Wheel 2.0 MAC: 34:85:18:5C:86:A0
 uint8_t wheel_address[] = {0x34, 0x85, 0x18, 0x5C, 0x86, 0xA0};
@@ -236,15 +237,15 @@ void peripheral_task(void *pvParameter){
     
     //buzz_hz(12 * m_meas[0].w_m + 1000);
     
-    imu.read();
+    imu_LSM6D.update();
     
-    Serial.print(imu.a.x); Serial.print("\t");
-    Serial.print(imu.a.y); Serial.print("\t");
-    Serial.print(imu.a.z); Serial.print("\t");
+    Serial.print(imu_LSM6D.a.x_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.a.y_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.a.z_raw); Serial.print("\t");
     
-    Serial.print(imu.g.x); Serial.print("\t");
-    Serial.print(imu.g.y); Serial.print("\t");
-    Serial.print(imu.g.z); Serial.print("\t");
+    Serial.print(imu_LSM6D.g.x_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.g.y_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.g.z_raw); Serial.print("\t");
     
     Serial.println();
 
@@ -307,15 +308,6 @@ void speed_measurement_task(void *pvParameter){
 void init_i2c(){
   Wire.setPins(SDA, SCL);
   Wire.begin();
-}
-
-void init_imu(){
-  while(!imu.init(LSM6::device_DS33, LSM6::sa0_low)){
-    Serial.println("Failed to initialize IMU!");
-    delay(1000);
-  }
-  Serial.println("IMU initialized");
-  imu.enableDefault(); // TODO: Investigate how to get other resolutions
 }
 
 void init_tasks(){
@@ -419,7 +411,7 @@ void setup() {
 
   init_pins();
   init_i2c();
-  init_imu();
+  imu_LSM6D.begin();
 
   delay(1000);
 
