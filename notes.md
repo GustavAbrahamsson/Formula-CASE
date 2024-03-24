@@ -80,3 +80,40 @@ Mac address for the board can be gotten by using `env:print-mac` and reading ser
   - [x] Add fuse for USB
 
 #### Improvements
+
+
+
+### Hall effect sensor things (Johan)
+- DRV5056
+  - Unipolar, has been used for the first prototypes.
+  - A2 sensitivity gives 0.1 - 0.9 v centered at 0.6v when measuring from outside of wheel.
+    - This is how Johan tested during christmas break.
+      - Was then driven at 3.3 v?
+    - A2 has 100 mv/mT at 5 V, 39 mT range
+    - If a bipolar sensor is used, then a larger gain can be used without problems since saturation is not a problem in the same way. (0.1 v is the lowest value that can be outputted)
+      - 39 * 0.5/3.3 = 5.9 mT
+- DRV5055
+  - Bipolar, has not been used yet.
+  - A1 has $\pm$ 21 mT range
+    - Buy 2 for "outside wheel measurements"
+      - 15 mm distance from magnet to sensor
+  - Inside wheel measurements
+    - ~ 5 mm distance from magnet to sensor
+    - 1/3 of the distance
+    - Field strength is $\propto 1/r^3$
+    - $\frac{1/5^3}{1/15^3} = 3^3 = 27$
+    - This could give ~ $27 \cdot 5.9 = 160$ mT
+    - A4 has $\pm$ 169 mT range
+      - Buy 2 for "inside wheel measurements"
+- [TMAG5273](https://www.ti.com/lit/ds/symlink/tmag5273.pdf?ts=1708821180315)
+  - I2C
+  ![alt text](media/notes/image.png)
+  - A,B,C,D have different addresses
+  - 1 or 2 has different sensitivity
+    - Buy 2 of each range for testing with different addresses
+      - A1, B1, C2, D2
+      - These are not all in stock at mouser...
+      - ![alt text](media/notes/image-1.png)
+        - Buy one of each
+- MLX90393
+  - Used in foot sensor project
