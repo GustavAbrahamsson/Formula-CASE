@@ -1,8 +1,14 @@
 #include <Arduino.h>
 #include "esp_now.h"
 #include "WiFi.h"
-//#include "Motor_controller.h"
 #include <ESP32Servo.h>
+
+#include <Wire.h>
+
+//#include "Motor_controller.h"
+#include "LSM6D_IMU.h"
+
+LSM6D_IMU imu_LSM6D;
 
 // Global control variable for testing
 #define MOTORS_ALLOWED false
@@ -109,8 +115,8 @@ esp_now_peer_info_t peerInfo;
 String success;
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  // Serial.print("\r\nLast Packet Send Status:\t");
+  // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
   if (status ==0){
     success = "Delivery Success :)";
   }
@@ -133,6 +139,10 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   //Serial.println(len);
 }
   
+// Play a certain frequency via buzzer
+void buzz_hz(uint16_t freq){
+  ledcWriteTone(BUZZER_CHNL, freq);
+}
 
 void init_esp_now(){
   // Set device as a Wi-Fi Station
@@ -208,10 +218,6 @@ void motor_task(void *pvParameter){
 
 }
 
-// Play a certain frequency via buzzer
-void buzz_hz(uint16_t freq){
-  ledcWriteTone(BUZZER_CHNL, freq);
-}
 
 
 // A peripheral task
@@ -229,7 +235,19 @@ void peripheral_task(void *pvParameter){
     // xWasDelayed value can be used to determine whether a deadline was missed
     // if the code here took too long.
     
-    buzz_hz(12 * m_meas[0].w_m + 1000);
+    //buzz_hz(12 * m_meas[0].w_m + 1000);
+    
+    imu_LSM6D.update();
+    
+    Serial.print(imu_LSM6D.a.x_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.a.y_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.a.z_raw); Serial.print("\t");
+    
+    Serial.print(imu_LSM6D.g.x_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.g.y_raw); Serial.print("\t");
+    Serial.print(imu_LSM6D.g.z_raw); Serial.print("\t");
+    
+    Serial.println();
 
     outgoing_message.w_ICE = m_meas[0].w_m;
     outgoing_message.phi = m_meas[0].phi;
@@ -286,6 +304,11 @@ void speed_measurement_task(void *pvParameter){
 
 
 // Motor_controller motor_controller = Motor_controller();
+
+void init_i2c(){
+  Wire.setPins(SDA, SCL);
+  Wire.begin();
+}
 
 void init_tasks(){
   xTaskCreatePinnedToCore(motor_task, "motor_task", 2048, NULL, 1, NULL, MOTOR_TASK_CORE);
@@ -376,16 +399,19 @@ void init_motors(){
   delay(250);
 }
 
-
 uint8_t servo_channel;
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
+  Serial.println("Car started");
+
   servo.setPeriodHertz(50);
 	servo_channel = servo.attach(SERVO_PIN, 925, 1925);
   servo.write(90);
 
   init_pins();
+  init_i2c();
+  imu_LSM6D.begin();
 
   delay(1000);
 
@@ -639,4 +665,60 @@ void loop() {
  
 // void loop(){
 
+// }
+
+
+// // I2C address scanner program
+// #include <Wire.h>
+// #include <Arduino.h>
+
+// void setup()
+// {
+//   Wire.setPins(8,9);
+//   Wire.begin();
+//   Serial.begin(115200);
+//   Serial.println("I2C Scanner");
+
+// }
+
+// void loop()
+// {
+//   byte error, address;
+//   int nDevices;
+
+//   Serial.println("Scanning...");
+
+//   nDevices = 0;
+//   for(address = 1; address < 127; address++ )
+//   {
+//     Wire.beginTransmission(address);
+//     error = Wire.endTransmission();
+
+//     if (error == 0)
+//     {
+//       Serial.print("I2C device found at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.print(address,HEX);
+//       Serial.println("  !");
+
+//       nDevices++;
+//     }
+//     else if (error==4)
+//     {
+//       Serial.print("Unknown error at address 0x");
+//       if (address < 16)
+//         Serial.print("0");
+
+//       Serial.println(address,HEX);
+//     }
+//   }
+
+//   if (nDevices == 0)
+//     Serial.println("No I2C devices found");
+//   else
+//     Serial.println("done");
+
+//   delay(5000); // wait 5 seconds for next scan
 // }
