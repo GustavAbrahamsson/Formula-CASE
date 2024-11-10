@@ -1,15 +1,13 @@
-# Formula-CASE
+# Formula-CASE | Miniature Formula-style RC cars!
 
-WIP
+## 4WD, ESP32-S3
+<img src="https://raw.githubusercontent.com/GustavAbrahamsson/Formula-CASE/refs/heads/main/Pictures/FC_car.jpg?token=GHSAT0AAAAAACYYUGVP26GIOT6MJKNEAIK6ZZRCCQA">
 
-<img src="https://raw.githubusercontent.com/GustavAbrahamsson/Formula-CASE/main/Pictures/FC-CAD_prototype4.png?token=GHSAT0AAAAAACH6NPKJFNVDI5S4XMQ57MFOZIN3OUQ">
-<img src="https://raw.githubusercontent.com/GustavAbrahamsson/Formula-CASE/main/Pictures/Prototype4.jpg?token=GHSAT0AAAAAACH6NPKIZB7Y5F4U5N2VHBH6ZIN3QNQ">
+## F1-inspired custom steering wheel, with magnetic paddle shifters
+<img src="https://github.com/GustavAbrahamsson/Formula-CASE/blob/main/Pictures/wheel_video.gif" width="1000" height="562"/>
+
+## Remote control with "driver POV" video feed
+<img src="https://github.com/GustavAbrahamsson/Formula-CASE/blob/main/Pictures/driving_demo.gif" width="1000" height="562"/>
 
 ## PCB
-
-![PCB render](Electronics/PCB/FC%20Control%20board%201.0/media/FC%20Control%20board%201.0_crop.png)
-
-[Schematic](Electronics/PCB/FC%20Control%20board%201.0/media/schematic_v1.0.pdf), [IBOM](Electronics/PCB/FC%20Control%20board%201.0/bom/ibom.html), [Notes](Code/Testing/FC-control-board/notes.md)
-
-
-
+<img src="https://raw.githubusercontent.com/GustavAbrahamsson/Formula-CASE/refs/heads/main/Pictures/FC_PCB.jpg?token=GHSAT0AAAAAACYYUGVONSB5FXSNGOJ2UIK6ZZRCLLQ">
