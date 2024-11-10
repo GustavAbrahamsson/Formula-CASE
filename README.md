@@ -1,6 +1,6 @@
 # Formula-CASE | Miniature Formula-style RC cars!
 
-## ESP32-S3, FreeRTOS, 4WD, IMU
+## ESP32-S3, FreeRTOS, 4WD
 <img src="https://github.com/GustavAbrahamsson/Formula-CASE/blob/main/Pictures/FC_car.jpg" width="1000"/>
 
 ## F1-inspired custom steering wheel, with magnetic paddle shifters
