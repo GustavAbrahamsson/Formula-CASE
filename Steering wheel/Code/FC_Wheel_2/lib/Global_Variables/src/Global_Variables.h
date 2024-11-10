@@ -50,7 +50,13 @@
 #define TRIGGER_TASK_CORE 0
 
 #define IMU_TASK_FREQ 25 // Hz
-#define IMU_TASK_CORE 1
+#define IMU_TASK_CORE 0
+
+#define ESPNOW_TASK_FREQ 25 // Hz
+#define ESPNOW_TASK_CORE 1
+
+#define MISC_TASK_FREQ 50 // Hz
+#define MISC_TASK_CORE 0
 
 // General constants
 #define PADDLE_DEBOUNCE_STREAK 5
@@ -60,6 +66,8 @@ extern const float battery_voltage_coeff;
 #define GEAR_INDEX_MAX 8
 
 #define TRIG_LP_ALPHA 0.3 // LP-filter alpha for the throttle and brake
+
+#define TRIGGER_DEADZONE 0.075
 
 // 15-LED array object
 // All 15 LEDs at max brightness: 87 mA @ 4.03 V
@@ -83,7 +91,7 @@ extern const float gyr_z_offset;
 extern uint16_t throttle_R;
 extern uint16_t pitch;
 extern bool btn1_state;
-extern uint8_t current_gear;
+extern int8_t current_gear;
 extern bool paddle_R;
 extern bool paddle_L;
 extern bool new_paddle_R;

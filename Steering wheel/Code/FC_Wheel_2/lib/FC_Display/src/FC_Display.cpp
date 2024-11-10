@@ -23,6 +23,7 @@ void FC_Display::init_main(){
   init_gear();
   init_bar(&throttle_bar, 0);
   init_bar(&brake_bar, 0);
+  draw_text_box(FC_Display::espnow_no_connection);
 }
 
 // Init a certain status bar
@@ -77,10 +78,17 @@ void FC_Display::init_gear(){
 /* Change the gear number on the display
   @param gear Which gear index to show, with '0' being neutral [0, GEAR_INDEX_MAX]
 */
-void FC_Display::change_gear(uint8_t gear){
+void FC_Display::change_gear(int8_t gear){
   String out;
   tft_display->setTextFont(GEAR_FONT);
-  if(indicated_gear == 0) {
+  // Ugly if-statement
+  if(indicated_gear == -1) {
+    out = "R";
+    tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'R', and shift it
+    tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 15);
+  
+  } else if(indicated_gear == 0) {
     out = "N";
     tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
     tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
@@ -88,13 +96,19 @@ void FC_Display::change_gear(uint8_t gear){
   } else {
     out = String(indicated_gear);
     tft_display->setTextSize(GEAR_FONT_SIZE); // Normal size
-  tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+    tft_display->setCursor(gear_text_x_shift + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
                                                                   gear_indicator_pos_y + 3);
   }
   remove_text(out);
-  uint8_t gear_val = constrain(gear, 0, GEAR_INDEX_MAX);
+  int8_t gear_val = constrain(gear, -1, GEAR_INDEX_MAX);
   indicated_gear = gear_val; // Update local "current_gear"
-  if(indicated_gear == 0) {
+  if(indicated_gear == -1) {
+    out = "R";
+    tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'R', and shift it
+    tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
+                                                                  gear_indicator_pos_y + 15);
+  
+  } else if(indicated_gear == 0) {
     out = "N";
     tft_display->setTextSize(GEAR_FONT_SIZE-1); // Reduce size for 'N', and shift it
     tft_display->setCursor(gear_text_x_shift-2 + (SCREEN_WIDTH_FC - gear_text_size * 5) / 2,
@@ -217,4 +231,29 @@ void FC_Display::draw_rpm_gauge(float percentage)
   }
 
   tft_display->fillRect(blue_start, 0, blue_end - old_gauge_pos, RPM_GAUGE_HEIGHT, 0x04FF);
+}
+
+/* Draw using the contents of a 'text_box'
+*/
+void FC_Display::draw_text_box(text_box tb){
+  tft_display->fillRect(tb.x0, tb.y0, tb.width, tb.height, TFT_BLACK);
+  tft_display->drawRect(tb.x0, tb.y0, tb.width, tb.height, TFT_WHITE);
+
+  tft_display->fillCircle(tb.x0+tb.height/2, tb.y0+0.9*tb.height/2, 0.6 * tb.height/2.0, tb.color);
+
+  tft_display->setCursor(tb.x0 + tb.x_shift, tb.y0);
+  tft_display->setTextFont(2);
+  tft_display->setTextSize(1);
+  tft_display->print(tb.text);
+  
+}
+
+/* Show connection status
+*/
+void FC_Display::update_comms_status(bool is_connected){
+  if(is_connected)
+    draw_text_box(FC_Display::espnow_connected);
+  else{
+    draw_text_box(FC_Display::espnow_no_connection);
+  }
 }

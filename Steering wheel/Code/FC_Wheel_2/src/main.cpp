@@ -36,11 +36,13 @@ typedef struct wheel_to_car_msg {
     uint8_t throttle;
     uint8_t brake;
     float angle;
+    int8_t gear;
 } wheel_to_car_msg;
 
 typedef struct car_to_wheel_msg {
-    float w_ICE; // RPM
+    float w_ICE;
     float phi; // rad
+    float hall;
 } car_to_wheel_msg;
 
 
@@ -50,14 +52,18 @@ wheel_to_car_msg outgoing_message;
 
 esp_now_peer_info_t peerInfo;
 String success;
+bool espnow_connected = false;
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  //Serial.print("\r\nLast Packet Send Status:\t");
-  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-  if (status ==0){
+  // Serial.print("\r\nLast Packet Send Status:\t");
+  // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  
+  if (status == 0){
+    espnow_connected = true;
     success = "Delivery Success :)";
   }
   else{
+    espnow_connected = false;
     success = "Delivery Fail :(";
   }
 }
@@ -71,7 +77,6 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming_message, incomingData, sizeof(incoming_message));
   //Serial.print("Bytes received: ");
   //Serial.println(len);
-  
 }
   
 
@@ -187,6 +192,7 @@ void debounce_input(Peripheral_Digital<Func>* input){
     input->last_val = input->raw_val;
 }
 
+
 // The task that handles reading digital inputs
 void button_task(void *pvParameter){
 
@@ -254,11 +260,11 @@ void trigger_task(void *pvParameter){
     brake_trigger.current_val = low_pass_filter(brake_trigger.measurement, brake_trigger.old_val, TRIG_LP_ALPHA);
 
     wheel_throttle = constrain(255.0 * (float)(throttle_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
-    if(wheel_throttle < 0.1 * 255) {
+    if(wheel_throttle < TRIGGER_DEADZONE * 255) {
       wheel_throttle = 0;
     }
     wheel_brake = constrain(255.0 * (float)(brake_trigger.current_val-throttle_trigger.min_val)/value_interval,0,255);
-    if(wheel_brake < 0.1 * 255) {
+    if(wheel_brake < TRIGGER_DEADZONE * 255) {
       wheel_brake = 0;
     }
 
@@ -304,25 +310,69 @@ void imu_task(void *pvParameter){
 
     wheel_angle_deg = imu.getAngleZ();
 
-    outgoing_message.throttle = wheel_throttle;
-    outgoing_message.brake = wheel_brake;
-    outgoing_message.angle = wheel_angle_deg;
-    
-    esp_err_t result = esp_now_send(car_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
-
     Serial.print(incoming_message.w_ICE); Serial.print("\t");
     Serial.print(incoming_message.phi); Serial.print("\t");
+    Serial.print(incoming_message.hall); Serial.print("\t");
     Serial.println();
   }
 }
 
+// The task that handles communication
+void espnow_task(void *pvParameter){
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / ESPNOW_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  xLastWakeTime = xTaskGetTickCount();
+  
+  uint16_t temp_val;
+
+  while(1){
+    xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
+
+    outgoing_message.throttle = wheel_throttle;
+    outgoing_message.brake = wheel_brake;
+    outgoing_message.angle = wheel_angle_deg;
+    outgoing_message.gear = current_gear;
+
+    esp_err_t result = esp_now_send(car_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
+  }
+}
+
+
+// Miscellaneous task
+void misc_task(void *pvParameter){
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = pdMS_TO_TICKS(1000.0 / MISC_TASK_FREQ);
+  BaseType_t xWasDelayed;
+  xLastWakeTime = xTaskGetTickCount();
+
+  bool conn_status = false;
+
+  while(1){
+    xWasDelayed = xTaskDelayUntil(&xLastWakeTime, xFrequency);
+    
+    // Show connection status
+    if(conn_status != espnow_connected){
+      conn_status = espnow_connected;
+      disp.update_comms_status(conn_status);
+    }
+
+    // Show RPM on the LED-strip
+    tlc.ramp_set(255 * incoming_message.w_ICE / 30.0);
+
+    pitch = 500 + 500 * incoming_message.w_ICE / 30.0;
+  
+    if (digitalRead(BTN1_PIN)) (buzz1(pitch));
+    else (buzz1(0));
+  }
+}
 
 void init_tasks(){
   xTaskCreatePinnedToCore(button_task, "button_task", 2048, NULL, 1, NULL, BUTTON_TASK_CORE);
-  
   xTaskCreatePinnedToCore(trigger_task, "trigger_task", 2048, NULL, 1, NULL, TRIGGER_TASK_CORE);
-  
   xTaskCreatePinnedToCore(imu_task, "imu_task", 2048, NULL, 1, NULL, IMU_TASK_CORE);
+  xTaskCreatePinnedToCore(espnow_task, "espnow_task", 2048, NULL, 1, NULL, ESPNOW_TASK_CORE);
+  xTaskCreatePinnedToCore(misc_task, "misc_task", 2048, NULL, 1, NULL, MISC_TASK_CORE);
 }
 
 void setup(void)
@@ -330,11 +380,9 @@ void setup(void)
   setup_pins();
   //beep_beep();
   Serial.begin(115200);
-  delay(100);
   
   // Init LED array
   tlc.begin();
-  delay(100);
 
   // Init IMU
   imu.begin();
@@ -342,7 +390,6 @@ void setup(void)
 
   // Init TFT display
   disp.begin();
-  delay(100);
   
   // Turn off all the LEDs
   tlc.reset_LEDs();

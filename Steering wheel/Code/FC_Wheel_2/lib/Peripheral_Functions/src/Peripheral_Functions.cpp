@@ -9,7 +9,7 @@ void paddle_R_function(bool state){
 }
 
 void paddle_L_function(bool state){
-  if(state && (current_gear > 0)){
+  if(state && (current_gear > -1)){
     current_gear--;
     disp.change_gear(current_gear);
   }

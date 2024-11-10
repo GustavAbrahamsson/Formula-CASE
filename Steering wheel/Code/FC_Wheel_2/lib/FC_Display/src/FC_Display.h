@@ -16,6 +16,16 @@
 
 #define RPM_GAUGE_HEIGHT 20
 
+struct text_box{
+  String text;
+  uint8_t x_shift;
+  uint16_t x0;
+  uint16_t y0;
+  uint8_t height;
+  uint8_t width;
+  int color;
+};
+
 struct status_bar{
   uint8_t value;
   uint8_t old_value;
@@ -28,7 +38,7 @@ struct status_bar{
 
 class FC_Display{
     private:
-        uint8_t indicated_gear = 0;
+        int8_t indicated_gear = 0;
         static const uint16_t gear_text_size = 15;
         static const uint16_t gear_indicator_width = gear_text_size * 6 + 4;
         static const uint16_t gear_indicator_pos_y = 30;
@@ -65,6 +75,12 @@ class FC_Display{
         status_bar brake_bar =    {0, 0, brake_bar_x0, brake_bar_y0, brake_bar_height,
                                           brake_bar_width, brake_color};
 
+        static const int16_t espnow_box_width = 120;
+        static const int16_t espnow_box_height = 20;
+        text_box espnow_connected =     {"Connected", 35, SCREEN_WIDTH_FC - espnow_box_width, SCREEN_HEIGHT_FC - espnow_box_height, espnow_box_height, espnow_box_width, TFT_GREEN};
+        text_box espnow_no_connection = {"No connection", 25, SCREEN_WIDTH_FC - espnow_box_width, SCREEN_HEIGHT_FC - espnow_box_height, espnow_box_height, espnow_box_width, TFT_RED};
+
+
         // Important: Setup file 'Setup70b_ESP32_S3_ILI9341.h' is changed to correspond to the used pins
         // The core instance of the main display library
         TFT_eSPI* tft_display;
@@ -82,16 +98,17 @@ class FC_Display{
         FC_Display(TFT_eSPI* disp_addr);
         void begin();
         
-        void change_gear(uint8_t gear);
+        void change_gear(int8_t gear);
 
         void throttle(uint8_t throttle);
         void brake(uint8_t brake);
 
         void battery_SoC(float voltage);
-
         void draw_angle(float angle);
-
         void draw_rpm_gauge(float percentage);
+        void draw_text_box(text_box tb);
+
+        void update_comms_status(bool is_connected);
         
 };
 

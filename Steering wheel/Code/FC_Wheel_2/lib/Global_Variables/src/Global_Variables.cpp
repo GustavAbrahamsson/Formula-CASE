@@ -31,7 +31,7 @@ uint16_t throttle_R;
 uint16_t pitch;
 bool btn1_state;
 
-uint8_t current_gear = 0;
+int8_t current_gear = 0;
 bool paddle_R = 0;
 bool paddle_L = 0;
 bool new_paddle_R = 0;

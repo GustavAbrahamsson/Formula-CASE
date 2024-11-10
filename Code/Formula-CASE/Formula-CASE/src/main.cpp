@@ -4,6 +4,8 @@
 #include <ESP32Servo.h>
 
 #include <Wire.h>
+#include <deque>
+#include <numeric>
 
 //#include "Motor_controller.h"
 #include "LSM6D_IMU.h"
@@ -23,11 +25,13 @@ typedef struct wheel_to_car_msg {
     uint8_t throttle;
     uint8_t brake;
     float angle;
+    int8_t gear;
 } wheel_to_car_msg;
 
 typedef struct car_to_wheel_msg {
-    float w_ICE; // RPM
+    float w_ICE;
     float phi; // rad
+    float hall;
 } car_to_wheel_msg;
 
 // ADC pins
@@ -86,26 +90,38 @@ typedef struct car_to_wheel_msg {
 #define PERIPH_TASK_FREQ 50 // Hz
 #define PERIPH_TASK_CORE 1
 
-#define SPEED_TASK_FREQ 750 // Hz
+#define SPEED_TASK_FREQ 100 // Hz
 #define SPEED_TASK_CORE 1
 
 #define RAD_PER_S_TO_RPM 9.54957
 #define RPM_TO_RAD_PER_S 0.10471
 
+// General
+#define POWER_SCALING 0.5
+
+// Powertrain simulation        R   N   1    2    3    4     5     6     7    8
+const float GEAR_RATIOS[10] = {1.0, 0, 1.0, 0.85, 0.65, 0.55, 0.4, 0.3, 0.25, 0.2};
+
+int8_t current_gear = 0;
+
+const uint8_t num_old_w_samples = 5;
+
 struct motor_measurement {
-  int16_t w_m;      // Wheel speed, RPM
-  int16_t w_last;   // Old speed, RPM
+  float w_m;      // Wheel speed, RPM
+  std::deque<float> w_stored;
   float phi;      // Wheel angle, rad
   float phi_last; // Old angle, rad
-  int16_t hall_raw; // Raw measurement from analogRead()
+  int16_t hall_val; // Raw measurement from analogRead()
   int16_t max;
   int16_t min;
   int16_t mid;
   uint8_t pin;
+
+  motor_measurement() : w_stored(num_old_w_samples, 0.0) {}
 };
+// float w_last;   // Old speed, RPM
 
 motor_measurement m_meas[4];
-
 
 car_to_wheel_msg outgoing_message;
 
@@ -117,7 +133,7 @@ String success;
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   // Serial.print("\r\nLast Packet Send Status:\t");
   // Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-  if (status ==0){
+  if (status == 0){
     success = "Delivery Success :)";
   }
   else{
@@ -129,14 +145,13 @@ uint8_t wheel_throttle;
 uint8_t wheel_brake;
 float wheel_angle;
 
-
 Servo servo;
 
 // Callback when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming_message, incomingData, sizeof(incoming_message));
-  //Serial.print("Bytes received: ");
-  //Serial.println(len);
+  // Serial.print("Bytes received: ");
+  // Serial.println(len);
 }
   
 // Play a certain frequency via buzzer
@@ -173,6 +188,39 @@ void init_esp_now(){
   Serial.println("ESP_NOW initialized");
 }
 
+// Estimate of a torque map
+float torque_map(float w_input, int8_t gear, float w_min, float w_mid, float w_cutoff, float w_max, float T_max){
+  float T_out;
+
+  if (gear == 0){
+    return 0;
+  }
+
+  if (gear == 1){
+    w_min = 0;
+    w_mid = 0;
+  }
+
+  w_input /= GEAR_RATIOS[gear + 1];
+
+  if (w_input < w_min){ // Low rpm, output low torque
+    T_out = 0.1*T_max;
+  }else if (w_input < w_mid){ // Mid rpm, increase linearly
+    T_out = T_max * (w_input - w_min) / (w_mid - w_min);
+  }else if (w_input < w_cutoff){ // Optimal rpm, constant output
+    T_out = T_max;
+  }else if (w_input < w_max){ // Increasing rpm, decrease torque linearly
+    T_out = T_max * (1 - (w_input - w_cutoff) / (w_max - w_cutoff));
+  }else{ // Too high rpm, output low torque
+    T_out = 0.05*T_max;
+  }
+  
+  // Torque scaling based on gear
+  T_out *= GEAR_RATIOS[gear + 1];
+
+  return T_out;
+}
+
 // The task that finally applies new motor voltages and servo position
 void motor_task(void *pvParameter){
 
@@ -191,24 +239,26 @@ void motor_task(void *pvParameter){
     wheel_throttle = incoming_message.throttle;
     wheel_brake = incoming_message.brake;
     wheel_angle = incoming_message.angle;
+    current_gear = incoming_message.gear;
+
+    wheel_throttle *= torque_map(m_meas[0].w_m, current_gear, 2, 5, 10, 15, 1);
 
     servo.write(int(90 - constrain(wheel_angle * 50.0/90.0, -50.0, 50.0)));
   
-    if(wheel_throttle > 10){
+    if(wheel_throttle > 0){
       // Temp
-
-      ledcWrite(M2_ASS_PWM_CHL, wheel_throttle*0.05);
-      ledcWrite(M3_ASS_PWM_CHL, wheel_throttle*0.05);
+      ledcWrite(M2_ASS_PWM_CHL, wheel_throttle*POWER_SCALING);
+      ledcWrite(M3_ASS_PWM_CHL, wheel_throttle*POWER_SCALING);
     }
     else{
       ledcWrite(M2_ASS_PWM_CHL, 0);
       ledcWrite(M3_ASS_PWM_CHL, 0);
     }
 
-    if(wheel_brake > 10){
+    if(wheel_brake > 0){
       // Temp
-      ledcWrite(M1_ASS_PWM_CHL, wheel_brake*0.05);
-      ledcWrite(M0_ASS_PWM_CHL, wheel_brake*0.05);
+      ledcWrite(M1_ASS_PWM_CHL, wheel_brake*POWER_SCALING);
+      ledcWrite(M0_ASS_PWM_CHL, wheel_brake*POWER_SCALING);
     }
     else{
       ledcWrite(M1_ASS_PWM_CHL, 0);
@@ -229,30 +279,36 @@ void peripheral_task(void *pvParameter){
   // Initialise the xLastWakeTime variable with the current time.
   xLastWakeTime = xTaskGetTickCount();
 
+  float pitch;
+
+  float w_out;
+
   while(1){
     // Wait for the next cycle.
     xWasDelayed = xTaskDelayUntil( &xLastWakeTime, xFrequency );
     // xWasDelayed value can be used to determine whether a deadline was missed
     // if the code here took too long.
     
-    //buzz_hz(12 * m_meas[0].w_m + 1000);
+    pitch = 500 + 500 * GEAR_RATIOS[current_gear + 1] * m_meas[0].w_m / 30.0;
+    // pitch = 500 + 500 * current_gear;
+
+    buzz_hz(pitch);
     
     imu_LSM6D.update();
-    
-    Serial.print(imu_LSM6D.a.x_raw); Serial.print("\t");
-    Serial.print(imu_LSM6D.a.y_raw); Serial.print("\t");
-    Serial.print(imu_LSM6D.a.z_raw); Serial.print("\t");
-    
-    Serial.print(imu_LSM6D.g.x_raw); Serial.print("\t");
-    Serial.print(imu_LSM6D.g.y_raw); Serial.print("\t");
-    Serial.print(imu_LSM6D.g.z_raw); Serial.print("\t");
-    
-    Serial.println();
 
-    outgoing_message.w_ICE = m_meas[0].w_m;
-    outgoing_message.phi = m_meas[0].phi;
-    esp_err_t result = esp_now_send(wheel_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
     
+    // buzz_hz(500 + 100 * outgoing_message.w_ICE / 30.0);
+    
+    if(current_gear == 0){
+      w_out = 0;
+    }else{
+      w_out = m_meas[0].w_m / GEAR_RATIOS[current_gear + 1];
+    }
+
+    outgoing_message.w_ICE = w_out;
+    outgoing_message.phi = m_meas[0].phi;
+    outgoing_message.hall = wheel_throttle;
+    esp_err_t result = esp_now_send(wheel_address, (uint8_t *) &outgoing_message, sizeof(outgoing_message));
   }
 }
 
@@ -268,7 +324,16 @@ void speed_measurement_task(void *pvParameter){
 
   float angle;
 
-  float alpha = 0.005;
+  float alpha_hall = 1;
+
+  float alpha = 1;
+
+  // float max_w_change = 0.5;
+
+  for (int i = 0; i < 4; i++){
+    m_meas[i].min = 600;
+    m_meas[i].max = 800;
+  }
 
   while(1){
     // Wait for the next cycle.
@@ -276,29 +341,36 @@ void speed_measurement_task(void *pvParameter){
     // xWasDelayed value can be used to determine whether a deadline was missed
     // if the code here took too long.
 
-    m_meas[0].hall_raw = analogRead(HALL_EFF_0_PIN);
+    // Filter hall-effect signal
+    m_meas[0].hall_val = analogRead(HALL_EFF_0_PIN) * alpha_hall + (1.0 - alpha_hall) * m_meas[0].hall_val;
 
     // Update if new max/min has been measured
-    if (m_meas[0].hall_raw > m_meas[0].max){
-      m_meas[0].max = m_meas[0].hall_raw;
-      m_meas[0].mid = (m_meas[0].max + m_meas[0].min) / 2;
+    if (m_meas[0].hall_val > m_meas[0].max){
+      m_meas[0].max = m_meas[0].hall_val;
+      m_meas[0].mid = (m_meas[0].max + m_meas[0].min) / 2.0;
     }
-    else if(m_meas[0].hall_raw < m_meas[0].min){
-      m_meas[0].min = m_meas[0].hall_raw;
-      m_meas[0].mid = (m_meas[0].max + m_meas[0].min) / 2;
+    else if(m_meas[0].hall_val < m_meas[0].min){
+      m_meas[0].min = m_meas[0].hall_val;
+      m_meas[0].mid = (m_meas[0].max + m_meas[0].min) / 2.0;
     }
 
     m_meas[0].phi_last = m_meas[0].phi;
     // Convert to sine wave with amplitude 1, and extract angle from arcsin()
-    m_meas[0].phi = asin((float)(m_meas[0].hall_raw - m_meas[0].min) / ((float)m_meas[0].max) - 1);
+    m_meas[0].phi = asin((float)(m_meas[0].hall_val - m_meas[0].mid) / ((float)m_meas[0].max - m_meas[0].mid));
 
-    m_meas[0].w_last = m_meas[0].w_m;
+    m_meas[0].w_stored.push_front(m_meas[0].w_m);
+    m_meas[0].w_stored.pop_back();
     // (Angle - old_angle) / T
-    m_meas[0].w_m = RAD_PER_S_TO_RPM * (float)(m_meas[0].phi - m_meas[0].phi_last) / (float)(1.0/SPEED_TASK_FREQ);
+    m_meas[0].w_m = (float)(abs(m_meas[0].phi - m_meas[0].phi_last)) / (float)(1.0/SPEED_TASK_FREQ);
 
-    m_meas[0].w_m = abs(m_meas[0].w_m);
+    // m_meas[0].w_m = constrain(m_meas[0].w_m, m_meas[0].w_last - max_w_change, m_meas[0].w_last + max_w_change);
 
-    m_meas[0].w_m = alpha * m_meas[0].w_m + (1.0-alpha) * m_meas[0].w_last;
+    // m_meas[0].w_m = abs(m_meas[0].w_m);
+
+    //m_meas[0].w_m = alpha * m_meas[0].w_m + (1.0-alpha) * m_meas[0].w_stored.back();
+
+    // Average over recent values
+    m_meas[0].w_m = (1.0 / (num_old_w_samples + 1)) * (m_meas[0].w_m + std::accumulate(m_meas[0].w_stored.begin(), m_meas[0].w_stored.end(), 0));
   }
 }
 
@@ -402,7 +474,7 @@ void init_motors(){
 uint8_t servo_channel;
 
 void setup() {
-  Serial.begin(115200);
+  // Serial.begin(115200);
   Serial.println("Car started");
 
   servo.setPeriodHertz(50);
